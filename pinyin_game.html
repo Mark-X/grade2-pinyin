@@ -331,6 +331,7 @@ body {
   background: rgba(255,255,255,0.2);
   border-radius: 12px;
   padding: 4px 14px;
+  font-family: 'SimSun', 'STSong', 'Songti SC', serif;
 }
 .focus-badge {
   position: absolute;
@@ -360,7 +361,7 @@ body {
   color: #555;
   transition: all 0.15s;
   letter-spacing: 1px;
-  font-family: inherit;
+  font-family: 'SimSun', 'STSong', 'Songti SC', serif;
 }
 .option-btn:hover { background: #fff; border-color: #e5989b; transform: scale(1.03); }
 .option-btn:active { transform: scale(0.97); }
@@ -1276,29 +1277,41 @@ body {
   75%  { transform: rotate(-2deg); }
   100% { transform: rotate(0deg); }
 }
-/* 猴子区域 */
+/* 猴子区域：从右边出来 → 爬树 → 摘桃 → 从左边跑走 */
 .monkey-area {
   position: absolute;
-  right: 15px;
+  right: auto;
+  left: -120px;          /* 初始在屏幕外左边准备 */
   bottom: 15px;
   z-index: 7;
   font-size: 3em;
   opacity: 0;
-  transform: translateX(100px);
-  transition: all 0.4s ease;
+  transition: none;     /* 动画完全由 JS 控制 */
 }
+/* 猴子可见（初始进入） */
 .monkey-area.visible {
   opacity: 1;
-  transform: translateX(0);
 }
-.monkey-area.stealing {
-  animation: monkeySteal 0.7s ease-in-out;
+/* 猴子爬树：向上移动 */
+.monkey-area.climbing-tree {
+  transition: bottom 0.8s ease-in-out;
+  bottom: 180px;        /* 爬到树中部高度 */
 }
-@keyframes monkeySteal {
-  0%   { transform: translateX(0) scale(1); }
-  25%  { transform: translateX(-60px) scale(1.15); }
-  55%  { transform: translateX(-25px) scale(1.2); }
-  100% { transform: translateX(130px) scale(0.8); opacity: 0; }
+/* 猴子摘桃：伸手动作 */
+.monkey-area.reaching-peach {
+  animation: monkeyReach 0.4s ease-in-out;
+}
+@keyframes monkeyReach {
+  0%   { transform: scale(1) rotate(0deg); }
+  30%  { transform: scale(1.2) rotate(-8deg); }
+  60%  { transform: scale(1.25) rotate(-12deg); }
+  100% { transform: scale(1.15) rotate(-10deg); }
+}
+/* 猴子跑走（从树旁向左跑出屏幕） */
+.monkey-area.running-away {
+  transition: left 0.9s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s 0.6s;
+  left: -200px;
+  opacity: 0;
 }
 .monkey-peach {
   position: absolute;
@@ -2640,40 +2653,109 @@ function updateBasketDisplay(container, count) {
 }
 
 // 猴子逐个偷走答错的桃子
-function stealWrongPeaches(treePeaches, correct, wrong, monkeyArea, callback) {
+
+// 猴子从右边出来 → 爬上树 → 摘桃 → 从左边跑走
+// 猴子从右边出来 → 爬上树 → 摘桃 → 从左边跑走
+function stealWrongPeaches(treePeaches, correct, wrong, monkeyAreaEl, callback) {
   const peachEls = treePeaches.querySelectorAll('.tree-peach');
+  const scene = document.getElementById('harvest-scene');
   let idx = 0;
+
+  function resetMonkey() {
+    monkeyAreaEl.innerHTML = '🐒<span class="monkey-peach"></span>';
+    monkeyAreaEl.className = 'monkey-area';
+    monkeyAreaEl.style.left = '';
+    monkeyAreaEl.style.bottom = '';
+    monkeyAreaEl.style.opacity = '';
+    monkeyAreaEl.style.transition = 'none';
+  }
 
   function stealNext() {
     if (idx >= wrong) {
-      setTimeout(callback, 400);
+      setTimeout(() => {
+        resetMonkey();
+        if (callback) callback();
+      }, 400);
       return;
     }
+
     const el = peachEls[correct + idx];
-    if (idx === 0) {
-      monkeyArea.innerHTML = '\u{1F412}<span class="monkey-peach"></span>';
-      monkeyArea.className = 'monkey-area visible';
-    }
-    setTimeout(() => {
-      el.classList.add('caught');
-      monkeyArea.classList.add('stealing');
-      const mp = monkeyArea.querySelector('.monkey-peach');
-      if (mp) mp.textContent = '\u{1F351}';
-      sfxMonkeySteal();
+    const isFirst = (idx === 0);
+
+    if (isFirst) {
+      // ① 猴子从右边进入（跑到树下）
+      resetMonkey();
+      monkeyAreaEl.style.left = '200%';
+      monkeyAreaEl.style.opacity = '1';
+      monkeyAreaEl.style.transition = 'left 0.8s cubic-bezier(0.2,0.8,0.3,1)';
+      monkeyAreaEl.className = 'monkey-area visible';
+      // 猴子跑到树干附近（约50%位置）
+      requestAnimationFrame(() => {
+        monkeyAreaEl.style.left = '50%';
+      });
+      // ② 爬上树
       setTimeout(() => {
-        el.style.opacity = '0';
+        monkeyAreaEl.classList.add('climbing-tree');
+        // ③ 在树上摘桃子
         setTimeout(() => {
-          monkeyArea.classList.remove('stealing');
-          if (idx === wrong - 1) {
-            monkeyArea.className = 'monkey-area';
-            monkeyArea.innerHTML = '';
-          }
-          idx++;
-          stealNext();
-        }, 200);
-      }, 350);
-    }, idx === 0 ? 400 : 450);
+          monkeyAreaEl.classList.remove('climbing-tree');
+          monkeyAreaEl.classList.add('reaching-peach');
+          el.classList.add('caught');
+          const mp = monkeyAreaEl.querySelector('.monkey-peach');
+          if (mp) mp.textContent = '🍑';
+          sfxMonkeySteal();
+          // ④ 从树上爬下来（平滑动画）
+          setTimeout(() => {
+            monkeyAreaEl.classList.remove('reaching-peach');
+            monkeyAreaEl.style.transition = 'bottom 0.6s ease-in-out';
+            monkeyAreaEl.style.bottom = '15px';
+            // ⑤ 抱着桃子从左边跑走
+            setTimeout(() => {
+              monkeyAreaEl.classList.add('running-away');
+              setTimeout(() => {
+                idx++;
+                stealNext();
+              }, 900);
+            }, 350);
+          }, 500);
+        }, 600);
+      }, 900);
+    } else {
+      // 后续桃子：猴子重新从右边进入（更快）
+      resetMonkey();
+      monkeyAreaEl.style.left = '200%';
+      monkeyAreaEl.style.opacity = '1';
+      monkeyAreaEl.style.transition = 'left 0.5s cubic-bezier(0.2,0.8,0.3,1)';
+      monkeyAreaEl.className = 'monkey-area visible';
+      requestAnimationFrame(() => {
+        monkeyAreaEl.style.left = '50%';
+      });
+      setTimeout(() => {
+        monkeyAreaEl.classList.add('climbing-tree');
+        setTimeout(() => {
+          monkeyAreaEl.classList.remove('climbing-tree');
+          monkeyAreaEl.classList.add('reaching-peach');
+          el.classList.add('caught');
+          const mp = monkeyAreaEl.querySelector('.monkey-peach');
+          if (mp) mp.textContent = '🍑';
+          sfxMonkeySteal();
+          setTimeout(() => {
+            monkeyAreaEl.classList.remove('reaching-peach');
+            monkeyAreaEl.style.transition = 'bottom 0.5s ease-in-out';
+            monkeyAreaEl.style.bottom = '15px';
+            setTimeout(() => {
+              monkeyAreaEl.classList.add('running-away');
+              setTimeout(() => {
+                idx++;
+                stealNext();
+              }, 900);
+            }, 350);
+          }, 500);
+        }, 500);
+      }, 500);
+    }
   }
+
   stealNext();
 }
 
