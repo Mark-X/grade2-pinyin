@@ -424,8 +424,8 @@ body {
   margin-bottom: 5px;
   align-items: baseline;
 }
-.kc-label { color: #999; font-size: 0.85em; white-space: nowrap; min-width: 56px; }
-.kc-val { color: #444; flex: 1; }
+.kc-label { color: #999; font-size: 0.85em; white-space: nowrap; min-width: 56px; font-family: 'SimSun', 'STSong', 'Songti SC', serif; }
+.kc-val { color: #444; flex: 1; font-family: 'SimSun', 'STSong', 'Songti SC', serif; }
 .kc-tag {
   display: inline-block;
   background: #fff0e6;
@@ -434,6 +434,7 @@ body {
   padding: 2px 10px;
   margin: 1px 2px;
   font-size: 0.85em;
+  font-family: 'SimSun', 'STSong', 'Songti SC', serif;
 }
 .kc-tag.poly { background: #fff3e0; color: #e17055; }
 .kc-poly-block {
@@ -442,9 +443,10 @@ body {
   border-radius: 8px;
   padding: 6px 10px;
   margin: 4px 0;
+  font-family: 'SimSun', 'STSong', 'Songti SC', serif;
 }
-.kc-poly-py { font-weight: bold; color: #6d4c41; }
-.kc-poly-desc { color: #555; font-size: 0.88em; }
+.kc-poly-py { font-weight: bold; color: #6d4c41; font-family: 'SimSun', 'STSong', 'Songti SC', serif; }
+.kc-poly-desc { color: #555; font-size: 0.88em; font-family: 'SimSun', 'STSong', 'Songti SC', serif; }
 
 /* ===== Next 按钮 ===== */
 #next-btn {
@@ -725,6 +727,12 @@ body {
 .peach-tree .branch-2 { bottom: 130px; left: 50%; width: 75px; height: 9px; transform: rotate(28deg); transform-origin: left center; }
 .peach-tree .branch-3 { bottom: 148px; left: calc(50% - 60px); width: 42px; height: 6px; transform: rotate(-12deg); }
 .peach-tree .branch-4 { bottom: 150px; left: calc(50% + 12px); width: 42px; height: 6px; transform: rotate(18deg); transform-origin: left center; }
+.peach-tree .branch-5 { bottom: 105px; left: calc(50% - 50px); width: 35px; height: 5px; transform: rotate(-30deg); }
+.peach-tree .branch-6 { bottom: 110px; left: calc(50% + 5px); width: 50px; height: 6px; transform: rotate(22deg); transform-origin: left center; }
+.peach-tree .branch-7 { bottom: 135px; left: calc(50% - 35px); width: 28px; height: 5px; transform: rotate(-18deg); }
+.peach-tree .branch-8 { bottom: 140px; left: calc(50% + 30px); width: 32px; height: 5px; transform: rotate(15deg); transform-origin: left center; }
+.peach-tree .branch-9 { bottom: 90px; left: calc(50% - 25px); width: 30px; height: 4px; transform: rotate(-25deg); }
+.peach-tree .branch-10 { bottom: 95px; left: calc(50% + 10px); width: 38px; height: 5px; transform: rotate(20deg); transform-origin: left center; }
 /* 树冠 */
 .peach-tree .canopy {
   position: absolute;
@@ -736,6 +744,10 @@ body {
 .peach-tree .canopy-2 { top: 42px; left: calc(50% - 95px); width: 110px; height: 105px; }
 .peach-tree .canopy-3 { top: 38px; left: calc(50% + 48px); width: 120px; height: 115px; }
 .peach-tree .canopy-4 { top: 2px; left: calc(50% - 28px); width: 85px; height: 75px; }
+.peach-tree .canopy-5 { top: 60px; left: calc(50% - 80px); width: 70px; height: 65px; background: radial-gradient(circle at 45% 40%, #8dd66a, #5a9c3a 60%, #4a7d2a 100%); }
+.peach-tree .canopy-6 { top: 55px; left: calc(50% + 35px); width: 75px; height: 70px; background: radial-gradient(circle at 35% 45%, #7dce5a, #4a8c2a 60%, #3a6d1e 100%); }
+.peach-tree .canopy-7 { top: -15px; left: calc(50% + 10px); width: 60px; height: 55px; background: radial-gradient(circle at 40% 35%, #9de67a, #6aac4a 60%, #5a8d3a 100%); }
+.peach-tree .canopy-8 { top: 25px; left: calc(50% - 55px); width: 55px; height: 50px; background: radial-gradient(circle at 50% 40%, #8dd66a, #5a9c3a 60%, #4a7d2a 100%); }
 /* 树上的桃子层 */
 .tree-peaches {
   position: absolute;
@@ -1309,9 +1321,10 @@ body {
 }
 /* 猴子跑走（从树旁向左跑出屏幕） */
 .monkey-area.running-away {
-  transition: left 0.9s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s 0.6s;
+  transition: left 0.9s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s 0.6s, transform 0.3s ease;
   left: -200px;
   opacity: 0;
+  transform: scaleX(-1);
 }
 .monkey-peach {
   position: absolute;
@@ -1457,10 +1470,20 @@ body {
         <div class="canopy canopy-2"></div>
         <div class="canopy canopy-3"></div>
         <div class="canopy canopy-4"></div>
+        <div class="canopy canopy-5"></div>
+        <div class="canopy canopy-6"></div>
+        <div class="canopy canopy-7"></div>
+        <div class="canopy canopy-8"></div>
         <div class="branch branch-1"></div>
         <div class="branch branch-2"></div>
         <div class="branch branch-3"></div>
         <div class="branch branch-4"></div>
+        <div class="branch branch-5"></div>
+        <div class="branch branch-6"></div>
+        <div class="branch branch-7"></div>
+        <div class="branch branch-8"></div>
+        <div class="branch branch-9"></div>
+        <div class="branch branch-10"></div>
         <div class="trunk"></div>
         <div class="tree-peaches" id="tree-peaches"></div>
       </div>
@@ -2421,7 +2444,7 @@ function playHarvestAnimation(correct, wrong) {
   const batches = [];
   let remaining = allCorrectPeachData.length;
   while (remaining > 0) {
-    const batchSize = remaining <= 5 ? remaining : (3 + Math.floor(Math.random() * 3));
+    const batchSize = remaining <= 5 ? remaining : (6 + Math.floor(Math.random() * 5));
     batches.push(Math.min(batchSize, remaining));
     remaining -= Math.min(batchSize, remaining);
   }
