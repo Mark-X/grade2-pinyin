@@ -1,0 +1,2810 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>🍑 摘桃子 · 拼音大冒险 - 二年级上册</title>
+<script src="dict_data.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap');
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'ZCOOL KuaiLe', 'Microsoft YaHei', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+  background: linear-gradient(135deg, #ffe8d6 0%, #ffcdb2 30%, #ffb4a2 60%, #e5989b 100%);
+}
+
+/* ===== 首页 - 卡片选择 ===== */
+#home-screen {
+  min-height: 100vh;
+  padding: 20px 16px 40px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.home-header {
+  text-align: center;
+  padding: 16px 0 12px;
+}
+.home-title {
+  font-size: 2.2em;
+  color: #fff;
+  text-shadow: 2px 3px 8px rgba(255,107,129,0.5);
+  margin-bottom: 4px;
+}
+.home-subtitle {
+  color: rgba(255,255,255,0.85);
+  font-size: 0.95em;
+}
+.home-stats {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 10px 0 18px;
+  flex-wrap: wrap;
+}
+.home-stats span {
+  background: rgba(255,255,255,0.45);
+  border-radius: 20px;
+  padding: 5px 14px;
+  font-size: 0.82em;
+  color: #6d4c41;
+  font-weight: bold;
+  backdrop-filter: blur(4px);
+}
+
+/* 卡片网格 */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+/* 单个关卡卡片 */
+.level-card {
+  background: rgba(255,255,255,0.88);
+  border-radius: 20px;
+  padding: 16px 10px 14px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+  position: relative;
+  overflow: hidden;
+}
+.level-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 5px;
+  border-radius: 20px 20px 0 0;
+}
+.level-card:nth-child(5n+1)::before { background: linear-gradient(90deg, #ffb4a2, #e5989b); }
+.level-card:nth-child(5n+2)::before { background: linear-gradient(90deg, #f9c74f, #f8961e); }
+.level-card:nth-child(5n+3)::before { background: linear-gradient(90deg, #90be6d, #43aa8b); }
+.level-card:nth-child(5n+4)::before { background: linear-gradient(90deg, #f3722c, #f94144); }
+.level-card:nth-child(5n+5)::before { background: linear-gradient(90deg, #f9844a, #f3722c); }
+
+.level-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.14); }
+.level-card:active { transform: scale(0.97); }
+
+.level-card.locked {
+  opacity: 0.55;
+  cursor: not-allowed;
+  filter: grayscale(30%);
+}
+.level-card.locked:hover { transform: none; box-shadow: 0 4px 14px rgba(0,0,0,0.08); }
+
+.level-card.current {
+  background: rgba(255,255,255,0.95);
+  animation: cardGlow 2s ease infinite;
+}
+@keyframes cardGlow {
+  0%, 100% { box-shadow: 0 4px 14px rgba(229,152,155,0.2); }
+  50% { box-shadow: 0 4px 28px rgba(229,152,155,0.45); }
+}
+
+.card-emoji {
+  font-size: 2.4em;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+.card-level {
+  font-size: 0.72em;
+  color: #b2bec3;
+  margin-bottom: 2px;
+}
+.card-name {
+  font-size: 0.95em;
+  color: #2d3436;
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+.card-stars {
+  font-size: 0.7em;
+  letter-spacing: 1px;
+}
+.card-lock {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2em;
+  opacity: 0.4;
+}
+.card-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 0.7em;
+  background: #00b894;
+  color: #fff;
+  border-radius: 8px;
+  padding: 2px 8px;
+}
+
+/* ===== 游戏界面 ===== */
+#game-screen {
+  display: none;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #ffe8d6 0%, #ffcdb2 40%, #ffb4a2 70%, #e5989b 100%);
+  padding: 16px 14px;
+  justify-content: center;
+}
+.game-container {
+  max-width: 520px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.game-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.back-btn {
+  background: rgba(255,255,255,0.6);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  font-size: 1.2em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s;
+}
+.back-btn:active { transform: scale(0.9); }
+.game-title { font-size: 1em; font-weight: bold; color: #6d4c41; }
+.score-display { font-size: 0.85em; color: #8d6e63; }
+.peach-display { font-size: 0.85em; color: #6d4c41; }
+
+.progress-bar-wrap {
+  background: rgba(255,255,255,0.5);
+  border-radius: 12px;
+  height: 12px;
+  margin-bottom: 14px;
+  overflow: hidden;
+}
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #ffb4a2, #e5989b, #f3722c);
+  border-radius: 12px;
+  transition: width 0.4s ease;
+}
+
+.status-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 0.85em;
+}
+/* 桃子飘出动画 */
+.peach-pop {
+  position: fixed;
+  font-size: 2em;
+  z-index: 200;
+  pointer-events: none;
+  animation: peachFly 1s ease-out forwards;
+}
+@keyframes peachFly {
+  0% { opacity: 1; transform: scale(0.5) translateY(0); }
+  30% { opacity: 1; transform: scale(1.3) translateY(-20px); }
+  100% { opacity: 0; transform: scale(1) translateY(-80px); }
+}
+.lives-display { color: #e74c3c; font-size: 1.1em; }
+.combo-display { color: #f39c12; font-size: 0.9em; transition: transform 0.2s; }
+
+/* 连击动效 */
+.combo-pop {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 300;
+  pointer-events: none;
+  text-align: center;
+  animation: comboPop 1.2s ease-out forwards;
+}
+.combo-pop .combo-num {
+  font-size: 4em;
+  font-weight: 900;
+  color: #ff6b35;
+  text-shadow: 0 0 20px rgba(255,107,53,0.6), 3px 3px 0 #fff, -3px -3px 0 #fff, 3px -3px 0 #fff, -3px 3px 0 #fff;
+  animation: comboNumPop 1.2s ease-out forwards;
+}
+.combo-pop .combo-label {
+  font-size: 1.6em;
+  color: #fff;
+  text-shadow: 0 0 12px rgba(255,107,53,0.8), 2px 2px 4px rgba(0,0,0,0.3);
+  animation: comboLabelPop 1.2s ease-out forwards;
+}
+@keyframes comboPop {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.3); }
+  15% { opacity: 1; transform: translate(-50%, -50%) scale(1.3); }
+  30% { transform: translate(-50%, -50%) scale(1); }
+  70% { opacity: 1; transform: translate(-50%, -60%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -80%) scale(0.8); }
+}
+@keyframes comboNumPop {
+  0% { transform: scale(0.3) rotate(-10deg); }
+  20% { transform: scale(1.4) rotate(5deg); }
+  35% { transform: scale(1) rotate(0deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+@keyframes comboLabelPop {
+  0% { opacity: 0; transform: translateY(10px); }
+  25% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-10px); }
+}
+
+/* 连击粒子 */
+.combo-particle {
+  position: fixed;
+  z-index: 299;
+  pointer-events: none;
+  font-size: 1.5em;
+  animation: particleBurst 0.9s ease-out forwards;
+}
+@keyframes particleBurst {
+  0% { opacity: 1; transform: translate(0, 0) scale(1.2); }
+  100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(0.3); }
+}
+
+/* 连击屏幕闪光 */
+.combo-flash {
+  position: fixed;
+  inset: 0;
+  z-index: 298;
+  pointer-events: none;
+  animation: comboFlash 0.5s ease-out forwards;
+}
+@keyframes comboFlash {
+  0% { opacity: 0.3; }
+  100% { opacity: 0; }
+}
+
+/* combo-display 弹跳动画 */
+.combo-bounce {
+  animation: comboBounce 0.4s ease;
+}
+@keyframes comboBounce {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.5); }
+  70% { transform: scale(0.9); }
+  100% { transform: scale(1); }
+}
+
+/* 题目卡片 */
+.question-card {
+  background: linear-gradient(135deg, #ffb4a2, #e5989b);
+  border-radius: 28px;
+  padding: 28px 20px;
+  text-align: center;
+  margin-bottom: 16px;
+  color: white;
+  position: relative;
+  min-height: 150px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(229,152,155,0.35);
+}
+.question-char {
+  font-size: 5em;
+  font-weight: bold;
+  line-height: 1;
+  margin-bottom: 6px;
+  text-shadow: 3px 4px 8px rgba(0,0,0,0.2);
+  /* 宋体风格 */
+  font-family: 'SimSun', 'STSong', 'Songti SC', 'Noto Serif SC', serif;
+}
+.question-hint {
+  font-size: 0.85em;
+  opacity: 0.9;
+  background: rgba(255,255,255,0.2);
+  border-radius: 12px;
+  padding: 4px 14px;
+  font-family: 'SimSun', 'STSong', 'Songti SC', serif;
+}
+.focus-badge {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  background: rgba(255,255,255,0.3);
+  border-radius: 10px;
+  padding: 3px 10px;
+  font-size: 0.68em;
+}
+
+/* 选项按钮 */
+.options-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.option-btn {
+  background: rgba(255,255,255,0.88);
+  border: 3px solid #e8e8e8;
+  border-radius: 20px;
+  padding: 16px 8px;
+  cursor: pointer;
+  font-size: 1.1em;
+  font-weight: bold;
+  color: #555;
+  transition: all 0.15s;
+  letter-spacing: 1px;
+  font-family: 'SimSun', 'STSong', 'Songti SC', serif;
+}
+.option-btn:hover { background: #fff; border-color: #e5989b; transform: scale(1.03); }
+.option-btn:active { transform: scale(0.97); }
+.option-btn.correct {
+  background: #c8f7dc;
+  border-color: #00b894;
+  color: #1a7a3a;
+  animation: pop 0.35s ease;
+}
+.option-btn.wrong {
+  background: #ffe0e3;
+  border-color: #e74c3c;
+  color: #a02020;
+  animation: shake 0.4s ease;
+}
+.option-btn:disabled { cursor: default; }
+
+@keyframes pop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
+
+/* ===== 知识卡片 ===== */
+#know-card {
+  display: none;
+  background: rgba(255,255,255,0.92);
+  border: 3px solid #e5989b;
+  border-radius: 22px;
+  padding: 16px 18px;
+  margin-bottom: 14px;
+  font-size: 0.88em;
+  line-height: 1.65;
+  animation: slideDown 0.3s ease;
+  box-shadow: 0 4px 16px rgba(229,152,155,0.1);
+}
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+#know-card .kc-title {
+  font-weight: bold;
+  font-size: 1.05em;
+  color: #6d4c41;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.kc-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 5px;
+  align-items: baseline;
+}
+.kc-label { color: #999; font-size: 0.85em; white-space: nowrap; min-width: 56px; }
+.kc-val { color: #444; flex: 1; }
+.kc-tag {
+  display: inline-block;
+  background: #fff0e6;
+  color: #6d4c41;
+  border-radius: 10px;
+  padding: 2px 10px;
+  margin: 1px 2px;
+  font-size: 0.85em;
+}
+.kc-tag.poly { background: #fff3e0; color: #e17055; }
+.kc-poly-block {
+  background: #fff5f0;
+  border-left: 3px solid #e5989b;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin: 4px 0;
+}
+.kc-poly-py { font-weight: bold; color: #6d4c41; }
+.kc-poly-desc { color: #555; font-size: 0.88em; }
+
+/* ===== Next 按钮 ===== */
+#next-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #6d4c41, #8d6e63);
+  color: #fff;
+  border: 3px solid #4e342e;
+  border-radius: 22px;
+  padding: 16px 14px;
+  font-size: 1.15em;
+  font-weight: bold;
+  cursor: pointer;
+  display: none;
+  margin-top: 8px;
+  transition: transform 0.15s, box-shadow 0.15s;
+  font-family: inherit;
+  letter-spacing: 2px;
+  box-shadow: 0 6px 18px rgba(77,52,46,0.35);
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+#next-btn:hover {
+  transform: scale(1.03);
+  box-shadow: 0 8px 24px rgba(77,52,46,0.45);
+  background: linear-gradient(135deg, #5d4037, #795548);
+}
+#next-btn:active { transform: scale(0.97); }
+
+/* ===== 弹窗 ===== */
+.result-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+}
+.result-overlay.show { display: flex; }
+.result-box {
+  background: white;
+  border-radius: 28px;
+  padding: 24px 20px;
+  text-align: center;
+  max-width: 440px;
+  width: 100%;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  animation: bounceIn 0.4s ease;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+}
+@keyframes bounceIn {
+  0% { transform: scale(0.5); opacity: 0; }
+  80% { transform: scale(1.05); }
+  100% { transform: scale(1); opacity: 1; }
+}
+.result-box .emoji { font-size: 4em; margin-bottom: 10px; }
+.result-box h2 { font-size: 1.6em; margin-bottom: 8px; color: #6d4c41; }
+.result-box p { color: #888; margin-bottom: 20px; font-size: 0.92em; }
+.result-btn {
+  background: linear-gradient(135deg, #ffb4a2, #e5989b);
+  color: white;
+  border: none;
+  border-radius: 18px;
+  padding: 12px 24px;
+  font-size: 1em;
+  font-weight: bold;
+  cursor: pointer;
+  margin: 4px;
+  font-family: inherit;
+  transition: transform 0.15s;
+}
+.result-btn:active { transform: scale(0.95); }
+.result-btn.secondary {
+  background: linear-gradient(135deg, #90be6d, #43aa8b);
+}
+
+/* 音效开关 */
+.sound-toggle {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 50;
+  background: rgba(255,255,255,0.7);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 1.3em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s;
+}
+.sound-toggle:active { transform: scale(0.9); }
+
+/* 背景音乐开关 */
+.bgm-toggle {
+  position: fixed;
+  top: 58px;
+  right: 12px;
+  z-index: 50;
+  background: rgba(255,255,255,0.7);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 1.2em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s, opacity 0.2s;
+}
+.bgm-toggle.bgm-off {
+  opacity: 0.5;
+}
+.bgm-toggle:active { transform: scale(0.9); }
+
+/* ===== PC 端适配 ===== */
+@media (min-width: 768px) {
+  .card-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .level-card {
+    padding: 20px 14px 18px;
+    border-radius: 24px;
+  }
+  .card-emoji { font-size: 3em; }
+  .card-name { font-size: 1.05em; }
+  .home-title { font-size: 2.8em; }
+  .home-subtitle { font-size: 1.05em; }
+  #home-screen { padding: 30px 24px 50px; }
+
+  #game-screen {
+    display: none;
+    min-height: 100vh;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 40px;
+  }
+  .game-container {
+    max-width: 520px;
+    width: 100%;
+  }
+
+  .question-card {
+    min-height: 200px;
+    padding: 36px 30px;
+  }
+  .question-char {
+    font-size: 6em;
+  }
+
+  .option-btn {
+    padding: 18px 12px;
+    font-size: 1.15em;
+  }
+
+  #know-card {
+    padding: 20px 24px;
+    font-size: 0.92em;
+  }
+
+  .result-box {
+    max-width: 400px;
+    padding: 44px 36px;
+  }
+  .result-box .emoji { font-size: 5em; }
+
+  .level-card:hover { transform: translateY(-6px); box-shadow: 0 10px 28px rgba(0,0,0,0.14); }
+  .back-btn:hover { background: rgba(255,255,255,0.85); transform: scale(1.05); }
+  .option-btn:hover { transform: scale(1.04); box-shadow: 0 4px 16px rgba(229,152,155,0.2); }
+  .result-btn:hover { transform: scale(1.04); }
+  #next-btn:hover { transform: scale(1.03); box-shadow: 0 10px 28px rgba(77,52,46,0.5); }
+  .sound-toggle:hover { background: rgba(255,255,255,0.9); transform: scale(1.1); }
+  .bgm-toggle:hover { background: rgba(255,255,255,0.9); transform: scale(1.1); }
+}
+
+@media (min-width: 1200px) {
+  .card-grid {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 18px;
+  }
+  .home-title { font-size: 3em; }
+  .card-emoji { font-size: 3.2em; }
+  .game-container { max-width: 560px; }
+  .question-char { font-size: 6.5em; font-family: 'SimSun', 'STSong', 'Songti SC', serif; }
+  .option-btn { font-size: 1.2em; padding: 20px 14px; }
+}
+
+/* ===== 收获场景（通关动画） ===== */
+.harvest-scene {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  height: 480px;
+  margin: 0 auto 10px;
+  overflow: hidden;
+  border-radius: 18px;
+  background: linear-gradient(180deg, #87CEEB 0%, #b8e8b0 30%, #7cc45e 55%, #5a9a3c 75%, #3d6a1c 100%);
+}
+/* ===== 梯子：搭在树干左侧 ===== */
+.ladder {
+  position: absolute;
+  bottom: 0;
+  left: calc(50% - 55px); /* 梯子右边紧贴树干左侧 */
+  width: 50px;
+  height: 220px;
+  z-index: 6;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  transform: rotate(5deg); /* 微微倾斜，模拟靠在树干上 */
+  transform-origin: bottom right; /* 右下角靠近树干，顶部向右微倾 */
+}
+.ladder.visible {
+  opacity: 1;
+}
+
+/* 梯子两侧木条 */
+.ladder-side {
+  position: absolute;
+  bottom: 0;
+  width: 7px;
+  height: 100%;
+  background: linear-gradient(90deg, #c9a96e 0%, #e8d5a0 40%, #c9a96e 100%);
+  border-radius: 2px;
+  box-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+}
+.ladder-side-l { left: 0; }
+.ladder-side-r { right: 0; }
+
+/* 横杠（踏板） */
+.ladder-rung {
+  position: absolute;
+  left: 3px;
+  right: 3px;
+  height: 6px;
+  background: linear-gradient(90deg, #c9a96e 0%, #e8d5a0 40%, #c9a96e 100%);
+  border-radius: 2px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+}
+
+/* 树干：放大到18em */
+.peach-tree {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 260px;
+  height: 340px;
+  z-index: 2;
+}
+/* 树干 */
+.peach-tree .trunk {
+  position: absolute;
+  bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 20px; height: 150px;
+  background: linear-gradient(90deg, #6d4c2a, #8B5E3C, #6d4c2a);
+  border-radius: 8px 8px 4px 4px;
+  box-shadow: 2px 3px 6px rgba(0,0,0,0.25);
+}
+/* 树枝 */
+.peach-tree .branch {
+  position: absolute;
+  background: linear-gradient(90deg, #6d4c2a, #8B5E3C);
+  border-radius: 4px;
+  transform-origin: left center;
+}
+.peach-tree .branch-1 { bottom: 120px; left: 50%; width: 85px; height: 9px; transform: rotate(-25deg); }
+.peach-tree .branch-2 { bottom: 130px; left: 50%; width: 75px; height: 9px; transform: rotate(28deg); transform-origin: left center; }
+.peach-tree .branch-3 { bottom: 148px; left: calc(50% - 60px); width: 42px; height: 6px; transform: rotate(-12deg); }
+.peach-tree .branch-4 { bottom: 150px; left: calc(50% + 12px); width: 42px; height: 6px; transform: rotate(18deg); transform-origin: left center; }
+/* 树冠 */
+.peach-tree .canopy {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #7dce5a, #4a8c2a 60%, #3a6d1e 100%);
+  box-shadow: inset -3px -4px 8px rgba(0,0,0,0.12), 2px 3px 6px rgba(0,0,0,0.13);
+}
+.peach-tree .canopy-1 { top: 15px; left: 50%; transform: translateX(-50%); width: 170px; height: 160px; }
+.peach-tree .canopy-2 { top: 42px; left: calc(50% - 95px); width: 110px; height: 105px; }
+.peach-tree .canopy-3 { top: 38px; left: calc(50% + 48px); width: 120px; height: 115px; }
+.peach-tree .canopy-4 { top: 2px; left: calc(50% - 28px); width: 85px; height: 75px; }
+/* 树上的桃子层 */
+.tree-peaches {
+  position: absolute;
+  top: 0; left: 0;
+  width: 260px;
+  height: 340px;
+  z-index: 3;
+  pointer-events: none;
+}
+/* 单个桃子：长在树上 */
+.tree-peach {
+  position: absolute;
+  font-size: 2.2em;
+  z-index: 4;
+  transition: opacity 0.3s;
+  filter: drop-shadow(1px 2px 2px rgba(0,0,0,0.3));
+}
+/* 桃子被摘走的动画 */
+.tree-peach.picked {
+  animation: peachPicked 0.35s ease-in forwards;
+}
+@keyframes peachPicked {
+  0%   { transform: scale(1); opacity: 1; }
+  30%  { transform: scale(1.3); opacity: 1; }
+  100% { transform: scale(0); opacity: 0; }
+}
+/* 桃子被猴子偷走的动画 */
+.tree-peach.caught {
+  animation: peachCaught 0.4s ease-in forwards;
+}
+@keyframes peachCaught {
+  0%   { transform: translateY(0) scale(1); opacity: 1; }
+  30%  { transform: translateY(-15px) scale(1.3); opacity: 1; }
+  70%  { transform: translateX(40px) translateY(-20px) scale(0.8); opacity: 0.7; }
+  100% { transform: translateX(80px) translateY(-10px) scale(0); opacity: 0; }
+}
+/* ===== 小女孩角色：Q版卡通可爱风 ===== */
+.kid-area {
+  position: absolute;
+  z-index: 8;
+  transition: all 0.5s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1;
+  filter: drop-shadow(1px 3px 3px rgba(0,0,0,0.15));
+}
+
+/* --- 头部整体（含头发） --- */
+.kid-head-wrap {
+  position: relative;
+  z-index: 3;
+  width: 60px;
+  height: 56px;
+}
+
+/* 头发底层（覆盖头顶的圆弧） */
+.kid-head-wrap::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 56px; height: 36px;
+  background: #4A3728;
+  border-radius: 28px 28px 0 0;
+  z-index: 1;
+}
+
+/* 辫子 - 左 */
+.kid-braid-l {
+  position: absolute;
+  left: -4px; top: 22px;
+  width: 12px; height: 30px;
+  z-index: 0;
+}
+.kid-braid-l::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 10px; height: 14px;
+  background: #4A3728;
+  border-radius: 5px 5px 4px 4px;
+  transform: rotate(6deg);
+}
+.kid-braid-l::after {
+  content: '';
+  position: absolute;
+  top: 12px; left: 1px;
+  width: 8px; height: 14px;
+  background: #4A3728;
+  border-radius: 4px 4px 5px 5px;
+  transform: rotate(-3deg);
+}
+
+/* 辫子 - 右 */
+.kid-braid-r {
+  position: absolute;
+  right: -4px; top: 22px;
+  width: 12px; height: 30px;
+  z-index: 0;
+}
+.kid-braid-r::before {
+  content: '';
+  position: absolute;
+  top: 0; right: 0;
+  width: 10px; height: 14px;
+  background: #4A3728;
+  border-radius: 5px 5px 4px 4px;
+  transform: rotate(-6deg);
+}
+.kid-braid-r::after {
+  content: '';
+  position: absolute;
+  top: 12px; right: 1px;
+  width: 8px; height: 14px;
+  background: #4A3728;
+  border-radius: 4px 4px 5px 5px;
+  transform: rotate(3deg);
+}
+
+/* 蝴蝶结 - 左 */
+.kid-bow-l {
+  position: absolute;
+  left: -6px; top: 14px;
+  z-index: 5;
+  width: 16px; height: 12px;
+}
+.kid-bow-l::before, .kid-bow-l::after {
+  content: '';
+  position: absolute;
+  width: 9px; height: 8px;
+  background: #FF69B4;
+  border-radius: 50%;
+  border: 1px solid #E0559A;
+}
+.kid-bow-l::before { left: 0; top: 1px; }
+.kid-bow-l::after { right: 0; top: 1px; }
+
+/* 蝴蝶结 - 右 */
+.kid-bow-r {
+  position: absolute;
+  right: -6px; top: 14px;
+  z-index: 5;
+  width: 16px; height: 12px;
+}
+.kid-bow-r::before, .kid-bow-r::after {
+  content: '';
+  position: absolute;
+  width: 9px; height: 8px;
+  background: #FF69B4;
+  border-radius: 50%;
+  border: 1px solid #E0559A;
+}
+.kid-bow-r::before { left: 0; top: 1px; }
+.kid-bow-r::after { right: 0; top: 1px; }
+
+/* 脸蛋：Q版大头圆脸 */
+.kid-head {
+  position: absolute;
+  bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 50px;
+  height: 48px;
+  background: radial-gradient(circle at 40% 35%, #FFE8D6, #FFDAB9 60%, #F5C49C 100%);
+  border-radius: 50%;
+  z-index: 2;
+  border: 2.5px solid #E8B090;
+  box-shadow: inset -2px -2px 6px rgba(200,150,100,0.15);
+  overflow: visible;
+}
+
+/* 刘海：圆弧齐刘海 */
+.kid-head .bangs {
+  position: absolute;
+  top: -3px;
+  left: 10%;
+  right: 10%;
+  height: 14px;
+  background: #4A3728;
+  border-radius: 0 0 55% 55%;
+  z-index: 5;
+}
+/* 刘海中间分缝线 */
+.kid-head .bangs::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  width: 1px;
+  height: 6px;
+  background: #3A2718;
+}
+
+/* 眼睛：Q版大眼睛（黑珠+高光+睫毛） */
+.kid-eye-l, .kid-eye-r {
+  position: absolute;
+  top: 38%;
+  width: 9px; height: 11px;
+  background: #2C1810;
+  border-radius: 50%;
+  z-index: 6;
+}
+.kid-eye-l { left: 22%; }
+.kid-eye-r { right: 22%; }
+
+/* 眼睛高光 */
+.kid-eye-l::before, .kid-eye-r::before {
+  content: '';
+  position: absolute;
+  top: 2px; right: 1px;
+  width: 3px; height: 3px;
+  background: #fff;
+  border-radius: 50%;
+  z-index: 7;
+}
+.kid-eye-l::after, .kid-eye-r::after {
+  content: '';
+  position: absolute;
+  bottom: 2px; left: 2px;
+  width: 2px; height: 2px;
+  background: rgba(255,255,255,0.6);
+  border-radius: 50%;
+  z-index: 7;
+}
+
+/* 腮红：椭圆形淡粉 */
+.kid-head .blush-l, .kid-head .blush-r {
+  position: absolute;
+  width: 10px; height: 6px;
+  background: rgba(255,120,130,0.4);
+  border-radius: 50%;
+  top: 58%;
+  z-index: 4;
+}
+.kid-head .blush-l { left: 8%; }
+.kid-head .blush-r { right: 8%; }
+
+/* 嘴巴：开心小嘴 */
+.kid-head .mouth {
+  position: absolute;
+  bottom: 18%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 8px; height: 5px;
+  background: #E87060;
+  border-radius: 0 0 50% 50%;
+  z-index: 6;
+}
+
+/* --- 裙子身体 --- */
+.kid-body {
+  width: 32px;
+  height: 20px;
+  background: linear-gradient(180deg, #FF8EC4 0%, #FF6BAE 50%, #FF52A0 100%);
+  border-radius: 5px 5px 16px 16px;
+  margin-top: -3px;
+  position: relative;
+  z-index: 1;
+  border: 2px solid #E0508A;
+  box-shadow: inset 0 -3px 5px rgba(255,255,255,0.25), 0 2px 4px rgba(0,0,0,0.1);
+}
+/* 裙子花边 */
+.kid-body::after {
+  content: '';
+  position: absolute;
+  bottom: -4px; left: -1px; right: -1px;
+  height: 6px;
+  background: #FFF0F5;
+  border-radius: 0 0 16px 16px;
+  border: 1.5px solid #E0508A;
+  border-top: none;
+  /* 花边锯齿用 repeating radial-gradient */
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0px, transparent 4px,
+    #FFF0F5 4px, #FFF0F5 5px
+  );
+}
+
+/* 左手 */
+.kid-body::before {
+  content: '';
+  position: absolute;
+  left: -8px;
+  top: 2px;
+  width: 10px; height: 8px;
+  background: #FFDAB9;
+  border-radius: 4px 4px 3px 3px;
+  border: 1.5px solid #E8B090;
+  transform: rotate(-25deg);
+}
+
+/* 右手 */
+.kid-rhand {
+  position: absolute;
+  right: -8px;
+  top: 2px;
+  width: 10px; height: 8px;
+  background: #FFDAB9;
+  border-radius: 4px 4px 3px 3px;
+  border: 1.5px solid #E8B090;
+  transform: rotate(25deg);
+  z-index: 0;
+}
+
+/* 腿 */
+.kid-legs {
+  display: flex;
+  gap: 5px;
+  margin-top: -1px;
+  z-index: 0;
+}
+.kid-leg {
+  width: 8px; height: 12px;
+  background: #FFDAB9;
+  border-radius: 0 0 3px 3px;
+  border: 1.5px solid #E8B090;
+  position: relative;
+}
+/* 小粉鞋 */
+.kid-leg::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: -3px;
+  width: 14px; height: 6px;
+  background: #FF69B4;
+  border-radius: 3px 7px 4px 3px;
+  border: 1px solid #E0559A;
+}
+.kid-area.picking {
+  animation: kidPick 0.5s ease-in-out;
+}
+@keyframes kidPick {
+  0%   { transform: scale(1) rotate(0deg); }
+  15%  { transform: scale(1.1) rotate(-5deg) translateY(-6px); }
+  35%  { transform: scale(1.2) rotate(8deg) translateY(-10px); }
+  55%  { transform: scale(1.05) rotate(-3deg) translateY(-4px); }
+  75%  { transform: scale(1.08) rotate(2deg) translateY(-2px); }
+  100% { transform: scale(1) rotate(0deg) translateY(0); }
+}
+
+/* 走路动画：左右腿交替 */
+.kid-area.walking .kid-leg:nth-child(1) {
+  animation: walkLegL 0.3s ease-in-out infinite alternate;
+}
+.kid-area.walking .kid-leg:nth-child(2) {
+  animation: walkLegR 0.3s ease-in-out 0.15s infinite alternate;
+}
+@keyframes walkLegL {
+  0%   { transform: rotate(-8deg); }
+  100% { transform: rotate(8deg); }
+}
+@keyframes walkLegR {
+  0%   { transform: rotate(8deg); }
+  100% { transform: rotate(-8deg); }
+}
+/* 走路时身体微微晃动 */
+.kid-area.walking .kid-body {
+  animation: walkBody 0.3s ease-in-out infinite alternate;
+}
+@keyframes walkBody {
+  0%   { transform: rotate(-2deg); }
+  100% { transform: rotate(2deg); }
+}
+
+/* 爬梯子：小女孩贴在梯子前方 */
+.kid-area.on-ladder {
+  z-index: 7;
+}
+/* 爬梯子时腿部交替 */
+.kid-area.climbing .kid-leg:nth-child(1) {
+  animation: climbLeg 0.4s ease-in-out infinite alternate;
+}
+.kid-area.climbing .kid-leg:nth-child(2) {
+  animation: climbLeg 0.4s ease-in-out 0.2s infinite alternate;
+}
+@keyframes climbLeg {
+  0%   { transform: translateY(0); }
+  100% { transform: translateY(-8px); }
+}
+/* 伸手摘桃子 */
+.kid-area.reaching .kid-rhand {
+  animation: handReach 0.3s ease-in-out 2 alternate;
+}
+@keyframes handReach {
+  0%   { transform: rotate(25deg) translateY(0); }
+  100% { transform: rotate(-15deg) translateY(-8px); }
+}
+
+.kid-area.to-basket {
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 小女孩抱着的桃子：紧凑抱在怀里 */
+.kid-holding-peaches {
+  position: absolute;
+  top: 48px;    /* 胸口偏上，贴近身体 */
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0;
+  z-index: 10;
+  font-size: 0.85em;
+  line-height: 0.85;
+  letter-spacing: -2px;
+  white-space: nowrap;
+  animation: holdBounce 0.5s ease;
+  pointer-events: none;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.15);
+}
+/* 多个桃子时允许换行，但仍紧凑 */
+.kid-holding-peaches.multi {
+  flex-wrap: wrap;
+  max-width: 50px;
+  white-space: normal;
+  line-height: 0.75;
+}
+@keyframes holdBounce {
+  0%   { transform: translateX(-50%) scale(0); opacity: 0; }
+  50%  { transform: translateX(-50%) scale(1.3); opacity: 1; }
+  100% { transform: translateX(-50%) scale(1); opacity: 1; }
+}
+/* 走路时抱着的桃子微微晃动 */
+.kid-area.walking .kid-holding-peaches {
+  animation: holdSwing 0.3s ease-in-out infinite alternate;
+}
+@keyframes holdSwing {
+  0%   { transform: translateX(-50%) rotate(-4deg) translateY(0); }
+  100% { transform: translateX(-50%) rotate(4deg) translateY(-1px); }
+}
+/* 放桃子到篮子的动画 */
+.drop-peach {
+  position: absolute;
+  font-size: 1.4em;
+  z-index: 9;
+  pointer-events: none;
+  animation: dropIntoBasket 0.4s ease-in forwards;
+  filter: drop-shadow(1px 2px 2px rgba(0,0,0,0.2));
+}
+@keyframes dropIntoBasket {
+  0%   { opacity: 1; transform: translateY(0) scale(1); }
+  50%  { opacity: 1; transform: translateY(15px) scale(1.1); }
+  100% { opacity: 0; transform: translateY(35px) scale(0.4); }
+}
+/* 篮子/框：CSS绘制 */
+.basket-area {
+  position: absolute;
+  bottom: 10px;
+  right: 12%;
+  z-index: 5;
+  text-align: center;
+  animation: basketBounce 0.5s ease;
+}
+.basket-body {
+  width: 80px;
+  height: 45px;
+  background: linear-gradient(180deg, #d4a574 0%, #c4956a 40%, #a67c52 100%);
+  border-radius: 4px 4px 16px 16px;
+  border: 3px solid #8b6914;
+  position: relative;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.25);
+}
+.basket-body::before {
+  content: '';
+  position: absolute;
+  top: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50px;
+  height: 22px;
+  border: 3px solid #8b6914;
+  border-bottom: none;
+  border-radius: 25px 25px 0 0;
+  background: transparent;
+}
+.basket-body::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: linear-gradient(90deg, #b8956a 0%, #d4a574 50%, #b8956a 100%);
+  border-radius: 2px 2px 0 0;
+}
+.basket-peaches {
+  position: absolute;
+  bottom: 38px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  width: 70px;
+}
+.basket-peach-stack {
+  font-size: 1.1em;
+  line-height: 0.75;
+  animation: peachInBasket 0.35s ease;
+}
+.basket-peach-count {
+  position: absolute;
+  top: -24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #ff6b6b, #e74c3c);
+  color: white;
+  font-size: 0.8em;
+  font-weight: bold;
+  padding: 2px 10px;
+  border-radius: 12px;
+  white-space: nowrap;
+  z-index: 10;
+  box-shadow: 0 2px 6px rgba(231,76,60,0.4);
+}
+@keyframes peachInBasket {
+  0%   { transform: scale(1.5) translateY(-12px); opacity: 0.5; }
+  60%  { transform: scale(0.85) translateY(3px); opacity: 1; }
+  100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+@keyframes basketBounce {
+  0%   { transform: scale(0.5); opacity: 0; }
+  60%  { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+/* 篮子接桃子晃动 */
+.basket-area.shake {
+  animation: basketShake 0.3s ease;
+}
+@keyframes basketShake {
+  0%   { transform: rotate(0deg); }
+  25%  { transform: rotate(-5deg); }
+  50%  { transform: rotate(4deg); }
+  75%  { transform: rotate(-2deg); }
+  100% { transform: rotate(0deg); }
+}
+/* 猴子区域：从右边出来 → 爬树 → 摘桃 → 从左边跑走 */
+.monkey-area {
+  position: absolute;
+  right: auto;
+  left: -120px;          /* 初始在屏幕外左边准备 */
+  bottom: 15px;
+  z-index: 7;
+  font-size: 3em;
+  opacity: 0;
+  transition: none;     /* 动画完全由 JS 控制 */
+}
+/* 猴子可见（初始进入） */
+.monkey-area.visible {
+  opacity: 1;
+}
+/* 猴子爬树：向上移动 */
+.monkey-area.climbing-tree {
+  transition: bottom 0.8s ease-in-out;
+  bottom: 180px;        /* 爬到树中部高度 */
+}
+/* 猴子摘桃：伸手动作 */
+.monkey-area.reaching-peach {
+  animation: monkeyReach 0.4s ease-in-out;
+}
+@keyframes monkeyReach {
+  0%   { transform: scale(1) rotate(0deg); }
+  30%  { transform: scale(1.2) rotate(-8deg); }
+  60%  { transform: scale(1.25) rotate(-12deg); }
+  100% { transform: scale(1.15) rotate(-10deg); }
+}
+/* 猴子跑走（从树旁向左跑出屏幕） */
+.monkey-area.running-away {
+  transition: left 0.9s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s 0.6s;
+  left: -200px;
+  opacity: 0;
+}
+.monkey-peach {
+  position: absolute;
+  top: -8px;
+  left: -18px;
+  font-size: 0.55em;
+}
+/* 收获总结文字 */
+.harvest-summary {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin: 8px 0 14px;
+  font-size: 0.95em;
+}
+.hs-item.hs-kept { color: #2d8a4e; font-weight: bold; }
+.hs-item.hs-stolen { color: #e74c3c; font-weight: bold; }
+/* 答错的字展示 */
+.hs-wrong-chars {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 10px;
+  width: 100%;
+}
+.hs-wrong-label {
+  font-size: 0.85em;
+  color: #888;
+  white-space: nowrap;
+}
+.hs-wrong-char {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px; height: 36px;
+  background: linear-gradient(135deg, #fff5f5, #ffe0e0);
+  border: 2px solid #e74c3c;
+  border-radius: 8px;
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #c0392b;
+  font-family: 'SimSun', 'STSong', 'Songti SC', serif;
+  box-shadow: 0 2px 4px rgba(231,76,60,0.15);
+  animation: wrongCharPop 0.4s ease backwards;
+}
+.hs-wrong-char:nth-child(2) { animation-delay: 0.1s; }
+.hs-wrong-char:nth-child(3) { animation-delay: 0.2s; }
+.hs-wrong-char:nth-child(4) { animation-delay: 0.3s; }
+.hs-wrong-char:nth-child(5) { animation-delay: 0.4s; }
+@keyframes wrongCharPop {
+  0%   { transform: scale(0) rotate(-10deg); opacity: 0; }
+  60%  { transform: scale(1.15) rotate(3deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+/* 通关弹窗 */
+.result-harvest {
+  max-width: 440px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  width: 100%;
+}
+.result-harvest h2 { font-size: 1.4em; text-align: center; }
+.result-harvest p { text-align: center; }
+.result-harvest .harvest-summary { justify-content: center; }
+#win-title { margin: 12px 0 6px; font-size: 1.3em; color: #d35400; word-break: keep-all; }
+#win-msg { margin: 4px 0 10px; font-size: 0.95em; color: #555; }
+.result-harvest .result-btn { margin: 4px; min-width: 140px; }
+</style>
+</head>
+<body>
+
+<!-- 音效开关 -->
+<button class="sound-toggle" id="sound-toggle" onclick="toggleSound()">🔊</button>
+<!-- 背景音乐开关 -->
+<button class="bgm-toggle bgm-off" id="bgm-toggle" onclick="toggleBgm()">🎵</button>
+
+<!-- ===== 首页 - 卡片选择 ===== -->
+<div id="home-screen">
+  <div class="home-header">
+    <div class="home-title">🍑 摘桃子 · 拼音大冒险</div>
+    <div class="home-subtitle">二年级上册 · 答题摘桃子</div>
+    <div class="home-stats">
+      <span>🍑 <span id="total-peaches">0</span>个桃子</span>
+      <span>⭐ <span id="total-passed">0</span>/15关</span>
+      <span>🎯 <span id="total-acc">—</span></span>
+      <span>📚 <span id="total-chars">0</span>字</span>
+    </div>
+  </div>
+  <div class="card-grid" id="card-grid"></div>
+</div>
+
+<!-- ===== 游戏界面 ===== -->
+<div id="game-screen">
+<div class="game-container">
+  <div class="game-header">
+    <button class="back-btn" onclick="goHome()">←</button>
+    <span class="game-title" id="game-title">第1关</span>
+    <span class="peach-display" id="peach-display">🍑 0</span>
+    <span class="score-display" id="score-display">0/0</span>
+  </div>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
+  </div>
+  <div class="status-row">
+    <span class="lives-display" id="lives-display">❤️❤️❤️</span>
+    <span style="flex:1"></span>
+    <span class="combo-display" id="combo-display"></span>
+  </div>
+
+  <div class="question-card">
+    <span class="focus-badge" id="focus-badge"></span>
+    <div class="question-char" id="q-char">字</div>
+    <div class="question-hint" id="q-hint">选择正确的拼音</div>
+  </div>
+
+  <div class="options-grid" id="options-grid"></div>
+
+  <div id="know-card">
+    <div class="kc-title">📖 <span id="kc-char-title"></span></div>
+    <div class="kc-row"><span class="kc-label">🔍 部首：</span><span class="kc-val" id="kc-radical">—</span></div>
+    <div class="kc-row"><span class="kc-label">✏️ 笔画：</span><span class="kc-val" id="kc-strokes">—</span></div>
+    <div class="kc-row"><span class="kc-label">📝 组词：</span><span class="kc-val" id="kc-words"></span></div>
+    <div class="kc-row"><span class="kc-label">💡 考点：</span><span class="kc-val" id="kc-exam"></span></div>
+    <div id="kc-poly-section"></div>
+  </div>
+
+  <button id="next-btn" onclick="nextQuestion()">🍑 下一题 →</button>
+</div>
+</div>
+
+<!-- 通关弹窗 -->
+<div class="result-overlay" id="win-overlay">
+  <div class="result-box result-harvest">
+        <div class="harvest-scene" id="harvest-scene">
+      <div class="peach-tree" id="peach-tree">
+        <div class="canopy canopy-1"></div>
+        <div class="canopy canopy-2"></div>
+        <div class="canopy canopy-3"></div>
+        <div class="canopy canopy-4"></div>
+        <div class="branch branch-1"></div>
+        <div class="branch branch-2"></div>
+        <div class="branch branch-3"></div>
+        <div class="branch branch-4"></div>
+        <div class="trunk"></div>
+        <div class="tree-peaches" id="tree-peaches"></div>
+      </div>
+
+      <!-- 梯子：靠在树干左侧 -->
+      <div class="ladder" id="ladder">
+        <div class="ladder-side ladder-side-l"></div>
+        <div class="ladder-side ladder-side-r"></div>
+        <div class="ladder-rung" style="bottom:36px"></div>
+        <div class="ladder-rung" style="bottom:68px"></div>
+        <div class="ladder-rung" style="bottom:100px"></div>
+        <div class="ladder-rung" style="bottom:132px"></div>
+        <div class="ladder-rung" style="bottom:164px"></div>
+      </div>
+
+      <div class="kid-area" id="kid-area">
+        <div class="kid-head-wrap">
+          <div class="kid-braid-l"></div>
+          <div class="kid-braid-r"></div>
+          <div class="kid-bow-l"></div>
+          <div class="kid-bow-r"></div>
+          <div class="kid-head">
+            <span class="bangs"></span>
+            <span class="kid-eye-l"></span>
+            <span class="kid-eye-r"></span>
+            <span class="blush-l"></span>
+            <span class="blush-r"></span>
+            <span class="mouth"></span>
+          </div>
+        </div>
+        <div class="kid-body">
+          <span class="kid-rhand"></span>
+        </div>
+        <div class="kid-legs"><div class="kid-leg"></div><div class="kid-leg"></div></div>
+      </div>
+      <div class="basket-area" id="basket-area">
+        <div class="basket-peaches" id="basket-peaches"></div>
+        <div class="basket-body"></div>
+      </div>
+      <div class="monkey-area" id="monkey-area"></div>
+    </div>
+    <h2 id="win-title">太棒了！摘到桃子啦！</h2>
+    <p id="win-msg"></p>
+    <div class="harvest-summary" id="harvest-summary"></div>
+    <button class="result-btn secondary" onclick="replayLevel()">🔄 再练一遍</button>
+    <button class="result-btn" onclick="goHome()">🏠 回家数桃子</button>
+  </div>
+</div>
+
+<!-- 失败弹窗 -->
+<div class="result-overlay" id="fail-overlay">
+  <div class="result-box">
+    <div class="emoji">😢</div>
+    <h2>加油哦！</h2>
+    <p id="fail-msg"></p>
+    <button class="result-btn" onclick="replayLevel()">💪 再试一次</button>
+    <button class="result-btn secondary" onclick="goHome()">🏠 回家数桃子</button>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// 音效系统（Web Audio API，纯代码生成音效，无需外部文件）
+// ============================================================
+let audioCtx = null;
+let soundEnabled = true;
+
+function getAudioCtx() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  return audioCtx;
+}
+
+function toggleSound() {
+  soundEnabled = !soundEnabled;
+  document.getElementById('sound-toggle').textContent = soundEnabled ? '🔊' : '🔇';
+  // 关闭音效时也停止背景音乐（但不改bgmEnabled状态，恢复音效后需手动重开）
+  if (!soundEnabled && bgmPlaying) {
+    stopBgm();
+    document.getElementById('bgm-toggle').classList.add('bgm-off');
+  }
+}
+
+function playTone(freq, duration, type, vol) {
+  if (!soundEnabled) return;
+  try {
+    const ctx = getAudioCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = type || 'sine';
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(vol || 0.3, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + duration);
+  } catch(e) {}
+}
+
+function sfxCorrect() {
+  playTone(523, 0.12, 'sine', 0.25);
+  setTimeout(() => playTone(659, 0.15, 'sine', 0.3), 100);
+  setTimeout(() => playTone(784, 0.2, 'sine', 0.25), 200);
+}
+
+function sfxWrong() {
+  playTone(220, 0.15, 'square', 0.15);
+  setTimeout(() => playTone(180, 0.25, 'square', 0.12), 120);
+}
+
+function sfxClick() {
+  playTone(880, 0.06, 'sine', 0.15);
+}
+
+function sfxWin() {
+  const notes = [523, 587, 659, 784, 880, 1047];
+  notes.forEach((f, i) => {
+    setTimeout(() => playTone(f, 0.15, 'sine', 0.2), i * 100);
+  });
+}
+
+function sfxFail() {
+  playTone(330, 0.2, 'sawtooth', 0.12);
+  setTimeout(() => playTone(260, 0.3, 'sawtooth', 0.1), 180);
+  setTimeout(() => playTone(200, 0.4, 'sawtooth', 0.08), 380);
+}
+
+function sfxCombo(count) {
+  const base = 600 + count * 50;
+  playTone(base, 0.08, 'sine', 0.2);
+  setTimeout(() => playTone(base + 200, 0.12, 'sine', 0.2), 60);
+}
+
+// ============================================================
+// 语音激励系统
+// ============================================================
+let lastSpeechTime = 0;
+
+function speakEncouragement(text) {
+  if (!window.speechSynthesis) return;
+  // 防止语音重叠：间隔至少1.2秒
+  const now = Date.now();
+  if (now - lastSpeechTime < 1200) {
+    speechSynthesis.cancel();
+  }
+  lastSpeechTime = now;
+
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = 'zh-CN';
+  utter.rate = 1.35;   // 快一点，像卡通小人
+  utter.pitch = 1.8;   // 超高音调，萌萌哒
+  utter.volume = 0.85;
+
+  // 尝试选用中文女声
+  const voices = speechSynthesis.getVoices();
+  const zhVoice = voices.find(v => v.lang.startsWith('zh') && v.name.includes('Female'))
+               || voices.find(v => v.lang.startsWith('zh'))
+               || voices[0];
+  if (zhVoice) utter.voice = zhVoice;
+
+  speechSynthesis.speak(utter);
+}
+
+// 答对时的鼓励语 —— 卡通可爱版
+const CORRECT_PHRASES = [
+  '答对啦！', '耶！对啦对啦！', '哇塞，好厉害呀！', '你太聪明啦！',
+  '棒棒哒！', '嘿嘿，答对咯！', '就是这么厉害！', '没错没错！',
+  '一下就答对啦！', '你也太厉害了吧！', '对啦对啦，真棒！',
+  '哇哦，好厉害好厉害！', '天才小朋友就是你！',
+];
+// 连击动效配置（按连击数递进）
+const COMBO_EFFECTS = {
+  3:  { label: '三连击！', color: '#ff9f43', emoji: '🔥', particles: 4 },
+  4:  { label: '四连击！', color: '#ee5a24', emoji: '💥', particles: 6 },
+  5:  { label: '五连击！', color: '#e74c3c', emoji: '⚡', particles: 8 },
+  6:  { label: '六连击！', color: '#6c5ce7', emoji: '🌟', particles: 10 },
+  7:  { label: '七连击！', color: '#0984e3', emoji: '💫', particles: 12 },
+  8:  { label: '八连击！', color: '#00b894', emoji: '🌈', particles: 14 },
+  9:  { label: '九连击！', color: '#fdcb6e', emoji: '🎆', particles: 16 },
+  10: { label: '十连击！', color: '#e056fd', emoji: '🏆', particles: 20 },
+};
+// 答错时的鼓励语 —— 温柔可爱版
+const WRONG_PHRASES = [
+  '没关系呀，再来一次吧！', '差一点点哦，加油加油！', '不要紧的，你一定行的！',
+  '没事没事，继续试试呀！', '别着急哦，慢慢来！', '你很棒啦，再试一次吧！',
+  '没关系哦，下次一定行！', '加油呀加油呀！', '再想想，你可以的哦！',
+  '小意思啦，继续加油哦！',
+];
+
+function sayCorrect() {
+  const phrase = CORRECT_PHRASES[Math.floor(Math.random() * CORRECT_PHRASES.length)];
+  speakEncouragement(phrase);
+}
+
+function sayCombo(count) {
+  // 已改为动效提示，不再使用语音
+  showComboEffect(count);
+}
+
+function sayWrong() {
+  const phrase = WRONG_PHRASES[Math.floor(Math.random() * WRONG_PHRASES.length)];
+  speakEncouragement(phrase);
+}
+
+// 预加载语音列表（部分浏览器需要异步加载）
+if (window.speechSynthesis) {
+  speechSynthesis.getVoices();
+  speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
+}
+
+// ============================================================
+// 背景音乐系统（Web Audio API 合成循环旋律）
+// ============================================================
+let bgmEnabled = false;  // 默认关闭，用户手动开启
+let bgmPlaying = false;
+let bgmTimer = null;
+
+// 欢快优美的五声音阶旋律（C大调五声，像八音盒）
+// 节奏：140BPM，轻快活泼
+const BGM_BPM = 140;
+const BGM_BEAT_MS = Math.round(60000 / BGM_BPM); // 一拍 ≈ 428ms
+
+// 时值缩写（ms）
+const BGM_Q  = Math.round(BGM_BEAT_MS * 0.5);   // 八分音符 ≈ 214ms
+const BGM_H  = Math.round(BGM_BEAT_MS * 1.0);   // 四分音符 ≈ 428ms
+const BGM_W  = Math.round(BGM_BEAT_MS * 2.0);   // 二分音符 ≈ 857ms
+const BGM_EI = Math.round(BGM_BEAT_MS * 0.25);  // 十六分音符 ≈ 107ms
+
+// 频率常量（Hz，C大调五声音阶 12356）
+// 低八度
+const FREQ_D1 = 262,  FREQ_D2 = 294,  FREQ_D3 = 330;
+const FREQ_E1 = 349,  FREQ_E2 = 392,  FREQ_E3 = 440;
+// 中音
+const FREQ_DO = 523,  FREQ_RE = 587,  FREQ_MI = 659;
+const FREQ_SOL= 784,  FREQ_LA = 880,  FREQ_SI = 988;
+// 高八度
+const FREQ_DO2=1047, FREQ_RE2=1175, FREQ_MI2=1319;
+const FREQ_SOL2=1568, FREQ_LA2=1760;
+
+const BGM_MELODY = [
+  // ── A段：欢快主旋律（mi sol la sol mi re do~）──
+  [FREQ_MI,  BGM_H],  [FREQ_SOL, BGM_H],  [FREQ_LA,  BGM_H],  [FREQ_SOL, BGM_H],
+  [FREQ_MI,  BGM_H],  [FREQ_RE,  BGM_H],  [FREQ_DO,  BGM_H],  [FREQ_DO,  BGM_W],
+  // A' 变奏
+  [FREQ_MI,  BGM_H],  [FREQ_SOL, BGM_H],  [FREQ_LA,  BGM_H],  [FREQ_SOL, BGM_H],
+  [FREQ_MI,  BGM_H],  [FREQ_RE,  BGM_H],  [FREQ_DO,  BGM_H],  [FREQ_DO,  BGM_W],
+  // B段（低音 la do re mi sol~）
+  [FREQ_E3, BGM_H],  [FREQ_DO,  BGM_H],  [FREQ_RE,  BGM_H],  [FREQ_MI,  BGM_H],
+  [FREQ_SOL,BGM_H],  [FREQ_MI,  BGM_H],  [FREQ_RE,  BGM_H],  [FREQ_DO,  BGM_W],
+
+  // ── C段：升高八度（do mi sol do~ la do mi~）──
+  [FREQ_DO,  BGM_H],  [FREQ_MI,  BGM_H],  [FREQ_SOL,BGM_H],  [FREQ_DO,  BGM_H],
+  [FREQ_DO,  BGM_H],  [FREQ_MI,  BGM_H],  [FREQ_SOL,BGM_H],  [FREQ_DO2,BGM_EI], [FREQ_DO2,BGM_EI],
+  [FREQ_E3, BGM_H],  [FREQ_MI,  BGM_H],  [FREQ_SOL,BGM_H],  [FREQ_E3,  BGM_H],
+  [FREQ_E3, BGM_H],  [FREQ_MI,  BGM_H],  [FREQ_SOL,BGM_H],  [FREQ_DO2, BGM_W],
+
+  // ── D段：活泼跳跃（十六分音符密集）──
+  [FREQ_MI,  BGM_EI], [FREQ_SOL,BGM_EI], [FREQ_LA,  BGM_EI], [FREQ_SOL,BGM_EI],
+  [FREQ_MI,  BGM_EI], [FREQ_RE,  BGM_EI], [FREQ_DO,  BGM_EI], [FREQ_DO,  BGM_EI],
+  [FREQ_MI,  BGM_EI], [FREQ_SOL,BGM_EI], [FREQ_LA,  BGM_EI], [FREQ_SOL,BGM_EI],
+  [FREQ_MI,  BGM_EI], [FREQ_RE,  BGM_EI], [FREQ_DO,  BGM_EI], [FREQ_DO,  BGM_EI],
+
+  // ── 小尾巴：渐慢收尾 ──
+  [FREQ_MI,  BGM_H],  [FREQ_SOL,BGM_H],  [FREQ_LA,  BGM_H],  [FREQ_DO2, BGM_H],
+  [FREQ_SOL,BGM_H],  [FREQ_MI,  BGM_H],  [FREQ_DO,  BGM_H],  [FREQ_DO,  BGM_W],
+  [FREQ_D1, BGM_Q],  [FREQ_D1, BGM_Q],  [FREQ_DO,  BGM_H],  [FREQ_DO,  BGM_W],
+];
+
+function playBgmNote(freq, durationMs) {
+  if (!soundEnabled || !bgmEnabled) return;
+  try {
+    const ctx = getAudioCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    // 用三角波，像音乐盒/风铃，柔和悦耳
+    osc.type = 'triangle';
+    osc.frequency.value = freq;
+
+    // 柔和的包络：快起慢落（durationMs 单位ms，转秒）
+    const durSec = durationMs / 1000;
+    gain.gain.setValueAtTime(0, ctx.currentTime);
+    gain.gain.linearRampToValueAtTime(0.05, ctx.currentTime + 0.03);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + durSec);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + durSec);
+  } catch(e) {}
+}
+
+// 和声层（高八度，音量更低，更丰满）
+function playBgmHarmony(freq, durationMs) {
+  if (!soundEnabled || !bgmEnabled) return;
+  try {
+    const ctx = getAudioCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type = 'sine';
+    osc.frequency.value = freq * 2; // 高八度
+
+    const durSec = durationMs / 1000;
+    gain.gain.setValueAtTime(0, ctx.currentTime);
+    gain.gain.linearRampToValueAtTime(0.02, ctx.currentTime + 0.05);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + durSec);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + durSec);
+  } catch(e) {}
+}
+
+function startBgm() {
+  if (bgmPlaying) return;
+  bgmPlaying = true;
+  bgmEnabled = true;
+
+  let noteIdx = 0;
+  function playNext() {
+    if (!bgmEnabled || !soundEnabled) {
+      bgmPlaying = false;
+      return;
+    }
+    const [freq, dur] = BGM_MELODY[noteIdx % BGM_MELODY.length];
+    playBgmNote(freq, dur);
+    // 每4个音符加一次和声，更丰满
+    if (noteIdx % 4 === 0) {
+      setTimeout(() => playBgmHarmony(freq, dur), 30);
+    }
+    noteIdx++;
+    // 每个音符之间加一点间隔，听起来更轻松
+    bgmTimer = setTimeout(playNext, dur + 60);
+  }
+  playNext();
+}
+
+function stopBgm() {
+  bgmEnabled = false;
+  bgmPlaying = false;
+  if (bgmTimer) {
+    clearTimeout(bgmTimer);
+    bgmTimer = null;
+  }
+}
+
+function toggleBgm() {
+  if (bgmEnabled) {
+    stopBgm();
+  } else {
+    startBgm();
+  }
+  document.getElementById('bgm-toggle').textContent = bgmEnabled ? '🔊' : '🎵';
+  document.getElementById('bgm-toggle').classList.toggle('bgm-off', !bgmEnabled);
+}
+
+// ============================================================
+// 关卡定义
+// ============================================================
+const LEVELS = [
+  { name:"秋天诗篇", emoji:"🍂", chars:["咏","贺","妆","丝","裁","剪","拂","堤","醉","趁","脱","袄","遮","掩","探","眉","吐","芽","符","解","触","杜","鹃","裹","颈","粒","漏","懊","丧","啊"] },
+  { name:"学校故事", emoji:"🏫", chars:["巧","绚","狐","狸","籽","礼","邓","坛","龄","格","致","勃","挖","额","汗","仍","肯","苗","移","挥","扶","亭","咨","询","剧","塔","餐","厅","厕","迹"] },
+  { name:"名人故事", emoji:"📖", chars:["曾","冒","蒙","瞧","宁","窝","顺","荆","棘","瓣","莹","觅","需","献","糕","尝","嘛","磨","粉","糖","料","甘","蔗","汁","熬","销","售","确","应","弱"] },
+  { name:"传统节日", emoji:"🏮", chars:["末","亚","簇","拥","随","芬","芳","紧","递","摸","显","州","遥","华","涌","隔","峡","与","陆","各","谊","浓","齐","奋","繁","传","统","贴","宵","巷"] },
+  { name:"美食文化", emoji:"🍜", chars:["潮","祭","扫","艾","堂","乞","郎","饼","赏","菊","甲","骨","漂","贵","饰","品","携","易","损","钱","币","财","赚","赔","购","拌","菠","煎","腐","茄"] },
+  { name:"厨房美食", emoji:"🍳", chars:["烤","葱","炖","蘑","菇","蒸","饺","炸","酱","粥","蛋","津","酸","溜","辣","乎","喷","腻","绵","脆","帮","梦","躺","聊","蹦","郁","般","精","境","叮"] },
+  { name:"动物世界", emoji:"🦊", chars:["咛","匹","郊","微","泛","纹","异","恋","舍","求","株","拾","骑","渡","荫","蔽","阿","姨","撑","便","冈","懂","案","倒","翁","橡","枪","控","坦","克"] },
+  { name:"寓言故事", emoji:"🐢", chars:["航","模","型","寓","则","亡","补","牢","圈","叼","修","堵","悔","实","焦","筋","喘","费","截","室","幅","哈","审","肃","晌","嬉","悦","棚","驮","坊"] },
+  { name:"自然风光", emoji:"🌄", chars:["挡","伯","浅","刚","淹","叹","唤","蹄","既","厨","柜","廊","商","厦","洞","穴","窟","窿","窖","窄","窑","鸣","含","岭","泊","晓","净","寺","宋","毕"] },
+  { name:"远古神话", emoji:"🐉", chars:["竟","压","蝉","蛛","蜘","响","哗","渐","慌","针","辨","忠","导","盏","永","闯","碰","稠","稀","渠","宇","宙","稳","须","固","杯","重","态","即","使"] },
+  { name:"四季变换", emoji:"🌸", chars:["饮","挤","浴","桶","简","博","邓","坛","谊","齐","芬","芳","糕","尝","磨","嬉","悦","帮","梦","精","境","宵","巷","潮","祭","堂","郎","赏","菊","甲"] },
+  { name:"成语故事", emoji:"📝", chars:["丧","冒","蒙","宁","窝","裹","颈","懊","仍","肯","触","杜","鹃","粒","漏","符","解","芽","吐","醉","趁","脱","袄","遮","掩","探","眉","咏","贺","妆"] },
+  { name:"生活百科", emoji:"🔬", chars:["倒","翁","橡","枪","控","坦","克","航","模","型","寓","则","亡","补","牢","圈","叼","修","堵","悔","实","焦","筋","喘","费","截","室","幅","哈","审"] },
+  { name:"综合复习", emoji:"📚", chars:["重","态","即","使","饮","挤","浴","桶","简","博","稠","稀","渠","宇","宙","稳","须","固","杯","蝉","蛛","蜘","响","哗","渐","慌","针","辨","忠","导"] },
+  { name:"终极挑战", emoji:"🏆", chars:["泊","晓","净","寺","宋","毕","竟","压","永","闯","碰","盏","导","忠","辨","针","慌","渐","哗","响","蜘","蛛","蝉","稳","须","固","重","即","使","传"] },
+];
+
+// ============================================================
+// 拼音数据
+// ============================================================
+const PY_MAP = {
+  "咏":"yǒng","贺":"hè","妆":"zhuāng","丝":"sī","裁":"cái","剪":"jiǎn","拂":"fú","堤":"dī","醉":"zuì","趁":"chèn",
+  "脱":"tuō","袄":"ǎo","遮":"zhē","掩":"yǎn","探":"tàn","眉":"méi","吐":"tǔ","芽":"yá","符":"fú","解":"jiě",
+  "触":"chù","杜":"dù","鹃":"juān","裹":"guǒ","颈":"jǐng","粒":"lì","漏":"lòu","懊":"ào","丧":"sàng","啊":"ā",
+  "巧":"qiǎo","绚":"xuàn","狐":"hú","狸":"lí","籽":"zǐ","礼":"lǐ","邓":"dèng","坛":"tán","龄":"líng","格":"gé",
+  "致":"zhì","勃":"bó","挖":"wā","额":"é","汗":"hàn","仍":"réng","肯":"kěn","苗":"miáo","移":"yí","挥":"huī",
+  "扶":"fú","亭":"tíng","咨":"zī","询":"xún","剧":"jù","塔":"tǎ","餐":"cān","厅":"tīng","厕":"cè","迹":"jì",
+  "曾":"céng","冒":"mào","蒙":"méng","瞧":"qiáo","宁":"níng","窝":"wō","顺":"shùn","荆":"jīng","棘":"jí","瓣":"bàn",
+  "莹":"yíng","觅":"mì","需":"xū","献":"xiàn","糕":"gāo","尝":"cháng","嘛":"ma","磨":"mó","粉":"fěn","糖":"táng",
+  "料":"liào","甘":"gān","蔗":"zhè","汁":"zhī","熬":"áo","销":"xiāo","售":"shòu","确":"què","应":"yīng","弱":"ruò",
+  "末":"mò","亚":"yà","簇":"cù","拥":"yōng","随":"suí","芬":"fēn","芳":"fāng","紧":"jǐn","递":"dì","摸":"mō",
+  "显":"xiǎn","州":"zhōu","遥":"yáo","华":"huá","涌":"yǒng","隔":"gé","峡":"xiá","与":"yǔ","陆":"lù","各":"gè",
+  "谊":"yì","浓":"nóng","齐":"qí","奋":"fèn","繁":"fán","传":"chuán","统":"tǒng","贴":"tiē","宵":"xiāo","巷":"xiàng",
+  "潮":"cháo","祭":"jì","扫":"sǎo","艾":"ài","堂":"táng","乞":"qǐ","郎":"láng","饼":"bǐng","赏":"shǎng","菊":"jú",
+  "甲":"jiǎ","骨":"gǔ","漂":"piāo","贵":"guì","饰":"shì","品":"pǐn","携":"xié","易":"yì","损":"sǔn","钱":"qián",
+  "币":"bì","财":"cái","赚":"zhuàn","赔":"péi","购":"gòu","拌":"bàn","菠":"bō","煎":"jiān","腐":"fǔ","茄":"qié",
+  "烤":"kǎo","葱":"cōng","炖":"dùn","蘑":"mó","菇":"gū","蒸":"zhēng","饺":"jiǎo","炸":"zhà","酱":"jiàng","粥":"zhōu",
+  "蛋":"dàn","津":"jīn","酸":"suān","溜":"liū","辣":"là","乎":"hū","喷":"pēn","腻":"nì","绵":"mián","脆":"cuì",
+  "帮":"bāng","梦":"mèng","躺":"tǎng","聊":"liáo","蹦":"bèng","郁":"yù","般":"bān","精":"jīng","境":"jìng","叮":"dīng",
+  "咛":"níng","匹":"pǐ","郊":"jiāo","微":"wēi","泛":"fàn","纹":"wén","异":"yì","恋":"liàn","舍":"shě","求":"qiú",
+  "株":"zhū","拾":"shí","骑":"qí","渡":"dù","荫":"yīn","蔽":"bì","阿":"ā","姨":"yí","撑":"chēng","便":"biàn",
+  "冈":"gāng","懂":"dǒng","案":"àn","倒":"dǎo","翁":"wēng","橡":"xiàng","枪":"qiāng","控":"kòng","坦":"tǎn","克":"kè",
+  "航":"háng","模":"mó","型":"xíng","寓":"yù","则":"zé","亡":"wáng","补":"bǔ","牢":"láo","圈":"quān","叼":"diāo",
+  "修":"xiū","堵":"dǔ","悔":"huǐ","实":"shí","焦":"jiāo","筋":"jīn","喘":"chuǎn","费":"fèi","截":"jié","室":"shì",
+  "幅":"fú","哈":"hā","审":"shěn","肃":"sù","晌":"shǎng","嬉":"xī","悦":"yuè","棚":"péng","驮":"tuó","坊":"fāng",
+  "挡":"dǎng","伯":"bó","浅":"qiǎn","刚":"gāng","淹":"yān","叹":"tàn","唤":"huàn","蹄":"tí","既":"jì","厨":"chú",
+  "柜":"guì","廊":"láng","商":"shāng","厦":"shà","洞":"dòng","穴":"xué","窟":"kū","窿":"lóng","窖":"jiào","窄":"zhǎi",
+  "窑":"yáo","鸣":"míng","含":"hán","岭":"lǐng","泊":"bó","晓":"xiǎo","净":"jìng","寺":"sì","宋":"sòng","毕":"bì",
+  "竟":"jìng","压":"yā","蝉":"chán","蛛":"zhū","蜘":"zhī","响":"xiǎng","哗":"huā","渐":"jiàn","慌":"huāng","针":"zhēn",
+  "辨":"biàn","忠":"zhōng","导":"dǎo","盏":"zhǎn","永":"yǒng","闯":"chuǎng","碰":"pèng","稠":"chóu","稀":"xī","渠":"qú",
+  "宇":"yǔ","宙":"zhòu","稳":"wěn","须":"xū","固":"gù","杯":"bēi","重":"zhòng","态":"tài","即":"jí","使":"shǐ",
+  "饮":"yǐn","挤":"jǐ","浴":"yù","桶":"tǒng","简":"jiǎn","博":"bó"
+};
+
+// ============================================================
+// 拼音相似干扰项生成
+// ============================================================
+const RETRO_SWAP = {"zh":"z","z":"zh","ch":"c","c":"ch","sh":"s","s":"sh","r":"l","l":"r"};
+const NASAL_SWAP = {
+  "an":"ang","ang":"an","en":"eng","eng":"en","in":"ing","ing":"in",
+  "ian":"iang","iang":"ian","uan":"uang","uang":"uan","un":"ong","ong":"un"
+};
+const TONE_VOWELS = {"ā":"a","á":"a","ǎ":"a","à":"a","ē":"e","é":"e","ě":"e","è":"e","ī":"i","í":"i","ǐ":"i","ì":"i","ō":"o","ó":"o","ǒ":"o","ò":"o","ū":"u","ú":"u","ǔ":"u","ù":"u","ǖ":"v","ǘ":"v","ǚ":"v","ǜ":"v"};
+const TONE_MAP = {"a":["ā","á","ǎ","à"],"e":["ē","é","ě","è"],"i":["ī","í","ǐ","ì"],"o":["ō","ó","ǒ","ò"],"u":["ū","ú","ǔ","ù"],"v":["ǖ","ǘ","ǚ","ǜ"]};
+
+function parsePinyin(py) {
+  let tone = 0, base = py;
+  for (let ch of py) {
+    if (TONE_VOWELS[ch]) {
+      const v = TONE_VOWELS[ch];
+      tone = TONE_MAP[v].indexOf(ch) + 1;
+      base = py.replace(ch, v === 'v' ? 'ü' : v);
+      break;
+    }
+  }
+  let initial = '';
+  const inis = ['zh','ch','sh','b','p','m','f','d','t','n','l','g','k','h','j','q','x','r','z','c','s','y','w'];
+  for (let ini of inis) { if (base.startsWith(ini)) { initial = ini; break; } }
+  const final = base.slice(initial.length);
+  return { initial, final, tone, base };
+}
+
+function buildPinyin(initial, final, tone) {
+  if (!tone) return initial + final;
+  const full = initial + final;
+  let vowelChar = '';
+  if (final === 'iu') vowelChar = 'u';
+  else if (final === 'ui') vowelChar = 'i';
+  else {
+    for (let v of ['a','e','o','i','u','ü']) {
+      if (final.includes(v)) { vowelChar = v; break; }
+    }
+  }
+  if (!vowelChar) return full;
+  const mapKey = vowelChar === 'ü' ? 'v' : vowelChar;
+  const toneChar = TONE_MAP[mapKey] ? TONE_MAP[mapKey][tone - 1] : vowelChar;
+  const idx = full.indexOf(vowelChar);
+  if (idx === -1) return full;
+  return full.slice(0, idx) + toneChar + full.slice(idx + 1);
+}
+
+function genSimilarOptions(correctPy, count) {
+  count = count || 3;
+  const { initial, final, tone } = parsePinyin(correctPy);
+  const cands = new Set();
+  if (RETRO_SWAP[initial]) {
+    const ni = RETRO_SWAP[initial];
+    cands.add(buildPinyin(ni, final, tone));
+    for (let t = 1; t <= 4; t++) { if (t !== tone) cands.add(buildPinyin(ni, final, t)); }
+  }
+  for (const [from, to] of Object.entries(NASAL_SWAP)) {
+    if (final.endsWith(from) || final === from) {
+      const nf = final.slice(0, final.length - from.length) + to;
+      cands.add(buildPinyin(initial, nf, tone));
+      for (let t = 1; t <= 4; t++) { if (t !== tone) cands.add(buildPinyin(initial, nf, t)); }
+    }
+  }
+  for (let t = 1; t <= 4; t++) { if (t !== tone) cands.add(buildPinyin(initial, final, t)); }
+  const allPys = Object.values(PY_MAP);
+  for (let i = 0; i < 30; i++) cands.add(allPys[Math.floor(Math.random() * allPys.length)]);
+  const arr = [...cands].filter(p => p && p !== correctPy);
+  shuffle(arr);
+  return arr.slice(0, count);
+}
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+// ============================================================
+// 游戏状态
+// ============================================================
+let currentLevel = 0;
+let queue = [];
+let qIdx = 0;
+let correctCount = 0;
+let totalAnswered = 0;
+let wrongSet = new Set();
+let lives = 3;
+let combo = 0;
+let answered = false;
+let sessionPeaches = 0;
+
+// 答对时飘出桃子动画
+function popPeach() {
+  const el = document.createElement('div');
+  el.className = 'peach-pop';
+  el.textContent = '🍑';
+  // 从题目卡片位置飘出
+  const charEl = document.getElementById('q-char');
+  const rect = charEl.getBoundingClientRect();
+  el.style.left = (rect.left + rect.width / 2 - 16) + 'px';
+  el.style.top = (rect.top + 10) + 'px';
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 1100);
+}
+
+// 连击动效：弹出文字 + 粒子 + 屏幕闪光
+function showComboEffect(count) {
+  if (count < 3) return;
+  
+  // 获取连击效果配置
+  const cfg = COMBO_EFFECTS[count] || { 
+    label: count + '连击！', 
+    color: '#e056fd', 
+    emoji: '🏆', 
+    particles: Math.min(20 + count, 30) 
+  };
+
+  // 1. 屏幕闪光
+  const flash = document.createElement('div');
+  flash.className = 'combo-flash';
+  flash.style.background = `radial-gradient(circle, ${cfg.color}40 0%, transparent 70%)`;
+  document.body.appendChild(flash);
+  setTimeout(() => flash.remove(), 500);
+
+  // 2. 连击数字弹出
+  const pop = document.createElement('div');
+  pop.className = 'combo-pop';
+  pop.innerHTML = `<div class="combo-num" style="color:${cfg.color}">${count}</div><div class="combo-label" style="color:${cfg.color}">${cfg.label}</div>`;
+  document.body.appendChild(pop);
+  setTimeout(() => pop.remove(), 1300);
+
+  // 3. 粒子爆发
+  const emojis = [cfg.emoji, '✨', '⭐', '💫', '🌟'];
+  for (let i = 0; i < cfg.particles; i++) {
+    const p = document.createElement('div');
+    p.className = 'combo-particle';
+    p.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    // 从屏幕中心向外扩散
+    const angle = (Math.PI * 2 * i) / cfg.particles + (Math.random() - 0.5) * 0.5;
+    const dist = 80 + Math.random() * 120;
+    const dx = Math.cos(angle) * dist;
+    const dy = Math.sin(angle) * dist;
+    p.style.cssText = `left:50%;top:50%;--dx:${dx}px;--dy:${dy}px;font-size:${1.2 + Math.random() * 0.8}em;`;
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), 1000);
+  }
+
+  // 4. combo-display 弹跳
+  const comboEl = document.getElementById('combo-display');
+  comboEl.classList.remove('combo-bounce');
+  void comboEl.offsetWidth; // 强制回流，重置动画
+  comboEl.classList.add('combo-bounce');
+}
+
+function loadProgress() {
+  try { return JSON.parse(localStorage.getItem('pinyinGame_v3') || '{}'); } catch(e) { return {}; }
+}
+function saveProgress(progress) {
+  localStorage.setItem('pinyinGame_v3', JSON.stringify(progress));
+}
+function markPassed(level) {
+  const p = loadProgress();
+  if (!p.passed) p.passed = [];
+  const isNew = !p.passed.includes(level);
+  if (isNew) p.passed.push(level);
+  if (!p.stats) p.stats = {};
+  p.stats[level] = { correct: correctCount, total: totalAnswered };
+  // 桃子计数：首次通关，赢得桃子数=答对数
+  if (!p.peaches) p.peaches = 0;
+  if (isNew) {
+    p.peaches += correctCount;
+  }
+  saveProgress(p);
+}
+
+// 获取指定关卡的进度详情 {correct, total, accuracy, passed}
+function getLevelProgress(levelIndex) {
+  const p = loadProgress();
+  const stats = p.stats || {};
+  const lvStat = stats[levelIndex];
+  const passedArr = p.passed || [];
+  if (!lvStat) return null;
+  return {
+    correct: lvStat.correct || 0,
+    total: lvStat.total || 0,
+    accuracy: lvStat.total > 0 ? Math.round(lvStat.correct / lvStat.total * 100) : 0,
+    passed: passedArr.includes(levelIndex)
+  };
+}
+
+// 判断某关卡是否已通过
+function isLevelPassed(levelIndex) {
+  const p = loadProgress();
+  return (p.passed || []).includes(levelIndex);
+}
+
+// ============================================================
+// 首页卡片渲染
+// ============================================================
+function renderHome() {
+  const p = loadProgress();
+  const passed = p.passed || [];
+  const container = document.getElementById('card-grid');
+  container.innerHTML = '';
+
+  LEVELS.forEach((lv, i) => {
+    const isPassed = passed.includes(i);
+    const isUnlocked = i === 0 || passed.includes(i - 1);
+    const isCurrent = isUnlocked && !isPassed;
+
+    const card = document.createElement('div');
+    card.className = 'level-card' + (isPassed ? ' passed' : '') + (!isUnlocked ? ' locked' : '') + (isCurrent ? ' current' : '');
+
+    // 星级显示 → 桃子显示
+    const stats = p.stats || {};
+    const lvStat = stats[i];
+    let starsHtml = '';
+    if (isPassed && lvStat) {
+      const acc = lvStat.total > 0 ? Math.round(lvStat.correct / lvStat.total * 100) : 0;
+      if (acc >= 90) starsHtml = '🍑🍑🍑';
+      else if (acc >= 70) starsHtml = '🍑🍑🤍';
+      else starsHtml = '🍑🤍🤍';
+    } else if (isCurrent) {
+      starsHtml = '🤍🤍🤍';
+    }
+
+    let inner = `<div class="card-emoji">${lv.emoji}</div>`;
+    inner += `<div class="card-level">第${i + 1}关</div>`;
+    inner += `<div class="card-name">${lv.name}</div>`;
+    inner += `<div class="card-stars">${starsHtml}</div>`;
+
+    if (isPassed) {
+      inner += `<span class="card-badge">✓</span>`;
+    }
+    if (!isUnlocked) {
+      inner += `<span class="card-lock">🔒</span>`;
+    }
+
+    card.innerHTML = inner;
+
+    if (isUnlocked) {
+      card.onclick = () => { sfxClick(); onCardClick(i); };
+    }
+
+    container.appendChild(card);
+  });
+
+  // 统计
+  document.getElementById('total-passed').textContent = passed.length;
+  const uniqueChars = new Set(LEVELS.flatMap(l => l.chars));
+  document.getElementById('total-chars').textContent = uniqueChars.size;
+  const allStats = p.stats || {};
+  let totalC = 0, totalT = 0;
+  Object.values(allStats).forEach(s => { totalC += s.correct || 0; totalT += s.total || 0; });
+  document.getElementById('total-acc').textContent = totalT > 0 ? Math.round(totalC / totalT * 100) + '%' : '—';
+  // 桃子总数
+  const peaches = p.peaches || 0;
+  document.getElementById('total-peaches').textContent = peaches;
+}
+
+// ============================================================
+// 开始关卡
+// ============================================================
+// 已通过的关卡：直接显示通关结果（不重新答题）
+function replayForPassedLevel(levelIndex) {
+  const level = LEVELS[levelIndex];
+  const saved = getLevelProgress(levelIndex);
+  if (!saved) return;
+
+  // 显示通关弹窗和收获动画
+  document.getElementById('win-overlay').classList.add('show');
+  document.getElementById('win-msg').textContent =
+    `\u{1F3AF} 本关共 ${level.chars.length} 题，正确率 ${saved.accuracy}%！`;
+  playHarvestAnimation(saved.correct, saved.total - saved.correct);
+}
+
+// 卡片点击：已通过的关卡直接看结果，未通过的进入游戏
+function onCardClick(levelIndex) {
+  if (isLevelPassed(levelIndex)) {
+    replayForPassedLevel(levelIndex);
+  } else {
+    startLevel(levelIndex);
+  }
+}
+
+function startLevel(lvIdx) {
+  currentLevel = lvIdx;
+  const lv = LEVELS[lvIdx];
+  const chars = lv.chars.filter(c => PY_MAP[c]);
+  queue = shuffle([...chars]);
+  qIdx = 0;
+  correctCount = 0;
+  totalAnswered = 0;
+  wrongSet = new Set();
+  lives = 3;
+  combo = 0;
+  answered = false;
+  sessionPeaches = 0;
+
+  document.getElementById('home-screen').style.display = 'none';
+  document.getElementById('game-screen').style.display = 'block';
+  document.getElementById('game-title').textContent = `${lv.emoji} 第${lvIdx + 1}关 · ${lv.name}`;
+
+  showQuestion();
+}
+
+function goHome() {
+  document.getElementById('game-screen').style.display = 'none';
+  document.getElementById('home-screen').style.display = 'block';
+  document.getElementById('win-overlay').classList.remove('show');
+  document.getElementById('fail-overlay').classList.remove('show');
+  renderHome();
+}
+
+function replayLevel() {
+  document.getElementById('win-overlay').classList.remove('show');
+  document.getElementById('fail-overlay').classList.remove('show');
+  startLevel(currentLevel);
+}
+
+// ============================================================
+// 显示题目
+// ============================================================
+function showQuestion() {
+  if (qIdx >= queue.length) { endLevel(true); return; }
+  answered = false;
+  const char = queue[qIdx];
+  const correctPy = PY_MAP[char];
+
+  const pct = Math.round(qIdx / queue.length * 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('score-display').textContent = `${qIdx}/${queue.length}`;
+  updateLivesDisplay();
+
+  document.getElementById('q-char').textContent = char;
+  document.getElementById('q-hint').textContent = '选择正确的拼音';
+
+  const dictEntry = (typeof DICT !== 'undefined') ? DICT[char] : null;
+  let focusText = '';
+  if (dictEntry && dictEntry.e) {
+    if (dictEntry.e.includes('翘舌') && dictEntry.e.includes('鼻')) focusText = '🔥翘舌+鼻音';
+    else if (dictEntry.e.includes('翘舌')) focusText = '🔥翘舌音';
+    else if (dictEntry.e.includes('前鼻')) focusText = '👃前鼻音';
+    else if (dictEntry.e.includes('后鼻')) focusText = '👃后鼻音';
+    else if (dictEntry.e.includes('多音')) focusText = '🎵多音字';
+  }
+  document.getElementById('focus-badge').textContent = focusText;
+
+  document.getElementById('know-card').style.display = 'none';
+  document.getElementById('next-btn').style.display = 'none';
+
+  const decoys = genSimilarOptions(correctPy, 3);
+  const options = shuffle([correctPy, ...decoys]);
+  const grid = document.getElementById('options-grid');
+  grid.innerHTML = '';
+  options.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.textContent = opt;
+    btn.onclick = () => handleAnswer(btn, opt, correctPy, char);
+    grid.appendChild(btn);
+  });
+}
+
+// ============================================================
+// 处理答题
+// ============================================================
+function handleAnswer(btn, chosen, correct, char) {
+  if (answered) return;
+  answered = true;
+  totalAnswered++;
+  const allBtns = document.querySelectorAll('.option-btn');
+  allBtns.forEach(b => b.disabled = true);
+
+  if (chosen === correct) {
+    btn.classList.add('correct');
+    correctCount++;
+    combo++;
+    sessionPeaches++;
+    sfxCorrect();
+    if (combo >= 3) { sfxCombo(combo); sayCombo(combo); }
+    else if (Math.random() < 0.35) { sayCorrect(); }  // 答对时35%几率说话，不要太频繁
+    updateCombo();
+    updatePeachDisplay();
+    popPeach();
+    wrongSet.delete(char);
+  } else {
+    btn.classList.add('wrong');
+    allBtns.forEach(b => { if (b.textContent === correct) b.classList.add('correct'); });
+    combo = 0;
+    lives--;
+    sfxWrong();
+    if (Math.random() < 0.4) sayWrong();  // 答错时40%几率鼓励，不要太频繁
+    updateLivesDisplay();
+    if (!wrongSet.has(char)) {
+      wrongSet.add(char);
+      const insertAt = Math.min(qIdx + 3 + Math.floor(Math.random() * 3), queue.length);
+      queue.splice(insertAt, 0, char);
+    }
+    if (lives <= 0) {
+      setTimeout(() => endLevel(false), 1200);
+      showKnowCard(char);
+      return;
+    }
+  }
+
+  showKnowCard(char);
+  document.getElementById('next-btn').style.display = 'block';
+}
+
+function nextQuestion() {
+  sfxClick();
+  qIdx++;
+  showQuestion();
+}
+
+function updateLivesDisplay() {
+  const h = '❤️'.repeat(Math.max(0, lives)) + '🖤'.repeat(Math.max(0, 3 - lives));
+  document.getElementById('lives-display').textContent = h;
+}
+
+function updateCombo() {
+  const el = document.getElementById('combo-display');
+  el.textContent = combo >= 3 ? `🔥${combo}连击！` : '';
+}
+
+function updatePeachDisplay() {
+  document.getElementById('peach-display').textContent = '🍑 ' + sessionPeaches;
+}
+
+// ============================================================
+// 知识卡片
+// ============================================================
+function showKnowCard(char) {
+  const card = document.getElementById('know-card');
+  if (typeof DICT === 'undefined' || !DICT[char]) { card.style.display = 'none'; return; }
+  const d = DICT[char];
+
+  document.getElementById('kc-char-title').textContent = char + '（' + (PY_MAP[char] || '') + '）';
+  document.getElementById('kc-radical').textContent = d.r ? `${d.r}（用"${d.r}"查字典）` : '—';
+  document.getElementById('kc-strokes').textContent = d.s ? `${d.s}画` : '—';
+  document.getElementById('kc-words').innerHTML = (d.w || []).map(w => `<span class="kc-tag">${w}</span>`).join('');
+  document.getElementById('kc-exam').textContent = d.e || '—';
+
+  const polyEl = document.getElementById('kc-poly-section');
+  if (d.p && d.p.length) {
+    polyEl.innerHTML = `<div style="margin-top:8px;font-weight:bold;color:#6d4c41;font-size:0.9em">🎵 多音字详解：</div>` +
+      d.p.map(pp => `<div class="kc-poly-block">
+        <span class="kc-poly-py">${pp.py}</span>
+        <span class="kc-poly-desc"> — ${pp.m}；例：${pp.x}</span>
+      </div>`).join('');
+  } else {
+    polyEl.innerHTML = '';
+  }
+  card.style.display = 'block';
+}
+
+// ============================================================
+// 结束关卡
+// ============================================================
+function endLevel(win) {
+  const acc = totalAnswered > 0 ? Math.round(correctCount / totalAnswered * 100) : 0;
+  const wrongCount = totalAnswered - correctCount;
+  if (win) {
+    markPassed(currentLevel);
+    sfxWin();
+    // 显示通关弹窗
+    document.getElementById('win-msg').textContent =
+      `答对 ${correctCount} 题，正确率 ${acc}%！`;
+    document.getElementById('win-overlay').classList.add('show');
+    // 播放收获动画
+    playHarvestAnimation(correctCount, wrongCount);
+  } else {
+    sfxFail();
+    document.getElementById('fail-msg').textContent =
+      `生命值耗尽！答对 ${correctCount}/${totalAnswered} 题，正确率 ${acc}%，再练练吧！`;
+    document.getElementById('fail-overlay').classList.add('show');
+  }
+}
+
+// 收获动画：小女孩爬梯子摘桃子 → 放到篮子里 + 猴子偷走答错的桃子
+function playHarvestAnimation(correct, wrong) {
+  const scene = document.getElementById('harvest-scene');
+  const treePeaches = document.getElementById('tree-peaches');
+  const kidArea = document.getElementById('kid-area');
+  const basketEl = document.getElementById('basket-area');
+  const basketPeachesEl = document.getElementById('basket-peaches');
+  const monkeyArea = document.getElementById('monkey-area');
+  const summaryEl = document.getElementById('harvest-summary');
+  const titleEl = document.getElementById('win-title');
+  const ladderEl = document.getElementById('ladder');
+
+  // 清空
+  treePeaches.innerHTML = '';
+  basketPeachesEl.innerHTML = '';
+  monkeyArea.innerHTML = '';
+  monkeyArea.className = 'monkey-area';
+  summaryEl.innerHTML = '';
+  ladderEl.classList.remove('visible');
+  // 重置篮子动画
+  basketEl.style.animation = 'none';
+  void basketEl.offsetWidth;
+  basketEl.style.animation = '';
+
+  const totalPeaches = correct + wrong;
+
+  // 在树上分布桃子 —— 挂在树冠/树枝上
+  const peachPositions = [];
+  const peachSlots = [
+    [60, 30], [120, 15], [180, 25], [40, 60], [210, 55],
+    [90, 45], [170, 40], [55, 90], [200, 80], [130, 70],
+    [155, 50], [75, 80], [185, 75], [130, 100], [140, 20],
+  ];
+  const shuffledSlots = shuffle([...peachSlots]).slice(0, totalPeaches);
+
+  for (let i = 0; i < totalPeaches; i++) {
+    const el = document.createElement('span');
+    el.className = 'tree-peach';
+    el.textContent = '\u{1F351}';
+    el.dataset.index = i;
+    el.dataset.correct = (i < correct) ? '1' : '0';
+    const [x, y] = shuffledSlots[i] || [60 + Math.random()*140, 20 + Math.random()*80];
+    el.style.left = x + 'px';
+    el.style.top = y + 'px';
+    peachPositions.push({ el, x, y });
+    treePeaches.appendChild(el);
+  }
+
+  // 小女孩初始位置：站在梯子旁边
+  kidArea.style.left = '10%';
+  kidArea.style.bottom = '15px';
+  kidArea.style.opacity = '1';
+  kidArea.style.transform = 'scaleX(1)';
+  kidArea.className = 'kid-area';
+
+  // 所有正确桃子分成3-5个一批（统一爬梯子）
+  const allCorrectPeachData = peachPositions.filter((_, i) => i < correct);
+  const batches = [];
+  let remaining = allCorrectPeachData.length;
+  while (remaining > 0) {
+    const batchSize = remaining <= 5 ? remaining : (3 + Math.floor(Math.random() * 3));
+    batches.push(Math.min(batchSize, remaining));
+    remaining -= Math.min(batchSize, remaining);
+  }
+  let peachCursor = 0;
+  const peachBatches = batches.map(sz => {
+    const slice = allCorrectPeachData.slice(peachCursor, peachCursor + sz);
+    peachCursor += sz;
+    return slice;
+  });
+
+  let batchIdx = 0;
+  let totalPicked = 0;
+
+  // 梯子在 scene 中的位置（用于计算小女孩爬梯子时的 left）
+  // 梯子搭在树干左侧：left: calc(50% - 55px), width: 50px
+  function getLadderCenterPercent() {
+    const sceneW = scene.offsetWidth;
+    // 梯子 left = 50% - 55px，梯子中心 = left + 25px = 50% - 30px
+    const ladderCenterPx = sceneW / 2 - 30;
+    return (ladderCenterPx / sceneW) * 100;
+  }
+
+  // 小女孩走到梯子底部
+  function walkToLadder(callback) {
+    const ladderCenterPct = getLadderCenterPercent();
+    kidArea.style.left = (ladderCenterPct - 2) + '%'; // 稍微偏左一点，站在梯子前面
+    kidArea.style.bottom = '15px';
+    kidArea.classList.add('walking');
+    // 从右边走回梯子需要更长时间
+    const curLeft = parseFloat(kidArea.style.left) || 10;
+    const dist = Math.abs((ladderCenterPct - 2) - curLeft);
+    const walkTime = Math.max(800, dist * 18); // 每百分比约18ms
+    setTimeout(() => {
+      kidArea.classList.remove('walking');
+      if (callback) callback();
+    }, walkTime);
+  }
+
+  // 小女孩爬上梯子（分阶段：从 bottom:15px → bottom:160px）
+  function climbUp(callback) {
+    ladderEl.classList.add('visible');
+    kidArea.classList.add('on-ladder', 'climbing');
+    // 爬到梯子顶部（对应树冠高度）
+    kidArea.style.bottom = '160px';
+    setTimeout(() => {
+      kidArea.classList.remove('climbing');
+      kidArea.classList.add('reaching');
+      if (callback) callback();
+    }, 1200);
+  }
+
+  // 小女孩爬下梯子
+  function climbDown(callback) {
+    kidArea.classList.remove('reaching');
+    kidArea.classList.add('climbing');
+    kidArea.style.bottom = '15px';
+    setTimeout(() => {
+      kidArea.classList.remove('climbing', 'on-ladder');
+      if (callback) callback();
+    }, 1000);
+  }
+
+  // 小女孩走到篮子旁边（篮子在右边）
+  function walkToBasket(callback) {
+    kidArea.classList.add('walking');
+    kidArea.style.left = '70%';
+    kidArea.style.bottom = '15px';
+    setTimeout(() => {
+      kidArea.classList.remove('walking');
+      if (callback) callback();
+    }, 900);
+  }
+
+  // 摘一批桃子（爬梯子摘取 → 抱着桃子爬下 → 走到篮子旁放下）
+  function pickBatchPeaches(peachList, callback) {
+    let stage = 0;  // 0=走向梯子, 1=爬上, 2=摘桃并抱住, 3=爬下(抱着), 4=走到篮子放下
+
+    function next() {
+      switch(stage) {
+        case 0:
+          // 走到梯子旁
+          walkToLadder(() => { stage = 1; next(); });
+          break;
+
+        case 1:
+          // 爬上梯子
+          climbUp(() => { stage = 2; next(); });
+          break;
+
+        case 2:
+          // ★ 摘桃子！桃子消失 → 小女孩抱住
+          kidArea.classList.add('reaching');
+          kidArea.classList.remove('picking');
+          void kidArea.offsetWidth;
+          kidArea.classList.add('picking');
+          sfxPeachDrop();
+
+          setTimeout(() => {
+            // 桃子从树上消失
+            peachList.forEach(p => {
+              p.el.classList.add('picked');
+            });
+
+            // 小女孩抱着桃子（胸前紧凑显示桃子emoji）
+            const holdEl = document.createElement('div');
+            const peachCount = peachList.length;
+            holdEl.className = 'kid-holding-peaches' + (peachCount > 3 ? ' multi' : '');
+            holdEl.id = 'kid-hold';
+            // 最多显示3个桃子emoji，多了用数字标记
+            if (peachCount <= 3) {
+              holdEl.textContent = '\u{1F351}'.repeat(peachCount);
+            } else {
+              holdEl.textContent = '\u{1F351}\u{1F351}\u00D7' + peachCount;
+            }
+            kidArea.appendChild(holdEl);
+
+            totalPicked += peachList.length;
+            stage = 3; next();
+          }, 400);
+          break;
+
+        case 3:
+          // 爬下梯子（抱着桃子）
+          climbDown(() => { stage = 4; next(); });
+          break;
+
+        case 4:
+          // 走到篮子旁，放下桃子
+          walkToBasket(() => {
+            // 放桃子到篮子的动画
+            dropPeachesToBasket(peachList.length, () => {
+              updateBasketDisplay(basketPeachesEl, totalPicked);
+              sfxBasketLand();
+              basketEl.classList.remove('shake');
+              void basketEl.offsetWidth;
+              basketEl.classList.add('shake');
+              if (callback) callback();
+            });
+          });
+          break;
+      }
+    }
+
+    next();
+  }
+
+  // 放桃子到篮子的动画
+  function dropPeachesToBasket(count, callback) {
+    const holdEl = document.getElementById('kid-hold');
+    if (!holdEl) { if (callback) callback(); return; }
+
+    // 创建下落桃子动画
+    const basketRect = basketEl.getBoundingClientRect();
+    const sceneRect = scene.getBoundingClientRect();
+    const bX = basketRect.left - sceneRect.left + basketRect.width / 2 - 10;
+    const bY = basketRect.top - sceneRect.top;
+
+    const dropCount = Math.min(count, 3); // 动画最多3个
+    for (let i = 0; i < dropCount; i++) {
+      const dp = document.createElement('span');
+      dp.className = 'drop-peach';
+      dp.textContent = '\u{1F351}';
+      dp.style.left = (bX + i * 18) + 'px';
+      dp.style.top = (bY - 20) + 'px';
+      dp.style.animationDelay = (i * 0.08) + 's';
+      scene.appendChild(dp);
+      setTimeout(() => dp.remove(), 500 + i * 80);
+    }
+
+    // 移除抱着的桃子
+    holdEl.style.transition = 'opacity 0.3s';
+    holdEl.style.opacity = '0';
+    setTimeout(() => {
+      holdEl.remove();
+      if (callback) callback();
+    }, 400);
+  }
+
+  // 主流程：逐个批次处理
+  function processNextBatch() {
+    if (batchIdx >= peachBatches.length) {
+      // 所有批次完成
+      ladderEl.classList.remove('visible');
+      if (wrong > 0) {
+        setTimeout(() => {
+          stealWrongPeaches(treePeaches, correct, wrong, monkeyArea, () => {
+            showHarvestSummary(correct, wrong, titleEl, summaryEl);
+          });
+        }, 600);
+      } else {
+        setTimeout(() => {
+          showHarvestSummary(correct, wrong, titleEl, summaryEl);
+        }, 400);
+      }
+      return;
+    }
+    const currentBatch = peachBatches[batchIdx];
+    batchIdx++;
+    pickBatchPeaches(currentBatch, () => {
+      // 本批结束，小女孩已在篮子旁，休息一下再继续
+      setTimeout(processNextBatch, 500);
+    });
+  }
+
+  // 延迟开始
+  setTimeout(processNextBatch, 600);
+}
+
+// 更新篮子桃子显示：数量标签 + 简洁堆叠示意
+function updateBasketDisplay(container, count) {
+  container.innerHTML = '';
+  if (count <= 0) return;
+
+  // 显示数量标签（醒目的圆形徽章）
+  const countLabel = document.createElement('div');
+  countLabel.className = 'basket-peach-count';
+  countLabel.textContent = '\u{1F351}\u00D7' + count;
+  container.appendChild(countLabel);
+
+  // 简洁堆叠：最多3行，每行2-3个桃子，不逐个排列
+  const rows = Math.min(3, Math.ceil(count / 3));
+  for (let r = 0; r < rows; r++) {
+    const row = document.createElement('div');
+    row.className = 'basket-peach-stack';
+    const peachesInRow = Math.min(3, count - r * 3);
+    row.textContent = '\u{1F351}'.repeat(peachesInRow);
+    container.appendChild(row);
+  }
+}
+
+// 猴子逐个偷走答错的桃子
+
+// 猴子从右边出来 → 爬上树 → 摘桃 → 从左边跑走
+// 猴子从右边出来 → 爬上树 → 摘桃 → 从左边跑走
+function stealWrongPeaches(treePeaches, correct, wrong, monkeyAreaEl, callback) {
+  const peachEls = treePeaches.querySelectorAll('.tree-peach');
+  const scene = document.getElementById('harvest-scene');
+  let idx = 0;
+
+  function resetMonkey() {
+    monkeyAreaEl.innerHTML = '🐒<span class="monkey-peach"></span>';
+    monkeyAreaEl.className = 'monkey-area';
+    monkeyAreaEl.style.left = '';
+    monkeyAreaEl.style.bottom = '';
+    monkeyAreaEl.style.opacity = '';
+    monkeyAreaEl.style.transition = 'none';
+  }
+
+  function stealNext() {
+    if (idx >= wrong) {
+      setTimeout(() => {
+        resetMonkey();
+        if (callback) callback();
+      }, 400);
+      return;
+    }
+
+    const el = peachEls[correct + idx];
+    const isFirst = (idx === 0);
+
+    if (isFirst) {
+      // ① 猴子从右边进入（跑到树下）
+      resetMonkey();
+      monkeyAreaEl.style.left = '200%';
+      monkeyAreaEl.style.opacity = '1';
+      monkeyAreaEl.style.transition = 'left 0.8s cubic-bezier(0.2,0.8,0.3,1)';
+      monkeyAreaEl.className = 'monkey-area visible';
+      // 猴子跑到树干附近（约50%位置）
+      requestAnimationFrame(() => {
+        monkeyAreaEl.style.left = '50%';
+      });
+      // ② 爬上树
+      setTimeout(() => {
+        monkeyAreaEl.classList.add('climbing-tree');
+        // ③ 在树上摘桃子
+        setTimeout(() => {
+          monkeyAreaEl.classList.remove('climbing-tree');
+          monkeyAreaEl.classList.add('reaching-peach');
+          el.classList.add('caught');
+          const mp = monkeyAreaEl.querySelector('.monkey-peach');
+          if (mp) mp.textContent = '🍑';
+          sfxMonkeySteal();
+          // ④ 从树上爬下来（平滑动画）
+          setTimeout(() => {
+            monkeyAreaEl.classList.remove('reaching-peach');
+            monkeyAreaEl.style.transition = 'bottom 0.6s ease-in-out';
+            monkeyAreaEl.style.bottom = '15px';
+            // ⑤ 抱着桃子从左边跑走
+            setTimeout(() => {
+              monkeyAreaEl.classList.add('running-away');
+              setTimeout(() => {
+                idx++;
+                stealNext();
+              }, 900);
+            }, 350);
+          }, 500);
+        }, 600);
+      }, 900);
+    } else {
+      // 后续桃子：猴子重新从右边进入（更快）
+      resetMonkey();
+      monkeyAreaEl.style.left = '200%';
+      monkeyAreaEl.style.opacity = '1';
+      monkeyAreaEl.style.transition = 'left 0.5s cubic-bezier(0.2,0.8,0.3,1)';
+      monkeyAreaEl.className = 'monkey-area visible';
+      requestAnimationFrame(() => {
+        monkeyAreaEl.style.left = '50%';
+      });
+      setTimeout(() => {
+        monkeyAreaEl.classList.add('climbing-tree');
+        setTimeout(() => {
+          monkeyAreaEl.classList.remove('climbing-tree');
+          monkeyAreaEl.classList.add('reaching-peach');
+          el.classList.add('caught');
+          const mp = monkeyAreaEl.querySelector('.monkey-peach');
+          if (mp) mp.textContent = '🍑';
+          sfxMonkeySteal();
+          setTimeout(() => {
+            monkeyAreaEl.classList.remove('reaching-peach');
+            monkeyAreaEl.style.transition = 'bottom 0.5s ease-in-out';
+            monkeyAreaEl.style.bottom = '15px';
+            setTimeout(() => {
+              monkeyAreaEl.classList.add('running-away');
+              setTimeout(() => {
+                idx++;
+                stealNext();
+              }, 900);
+            }, 350);
+          }, 500);
+        }, 500);
+      }, 500);
+    }
+  }
+
+  stealNext();
+}
+
+function showHarvestSummary(correct, wrong, titleEl, summaryEl) {
+  if (wrong === 0) {
+    titleEl.textContent = '\u{1F389} 全部答对！完美收获！';
+  } else if (correct > wrong * 2) {
+    titleEl.textContent = '\u{1F351} 收获满满！';
+  } else {
+    titleEl.textContent = '\u{1F351} 摘到桃子啦！';
+  }
+
+  let html =
+    `<span class="hs-item hs-kept">\u{1F351} 留住 \u00D7${correct}</span>` +
+    (wrong > 0 ? `<span class="hs-item hs-stolen">\u{1F412} 被偷 \u00D7${wrong}</span>` : '');
+
+  // 展示答错的字
+  if (wrong > 0 && wrongSet.size > 0) {
+    const wrongChars = [...wrongSet];
+    html += `<div class="hs-wrong-chars">
+      <span class="hs-wrong-label">\u{1F4DD} 需要再练：</span>
+      ${wrongChars.map(c => `<span class="hs-wrong-char">${c}</span>`).join('')}
+    </div>`;
+  }
+
+  summaryEl.innerHTML = html;
+}
+
+// 桃子落筐音效
+function sfxBasketLand() {
+  playTone(500, 0.06, 'sine', 0.12);
+  setTimeout(() => playTone(600, 0.08, 'sine', 0.1), 40);
+  setTimeout(() => playTone(450, 0.05, 'triangle', 0.08), 80);
+}
+// 桃子落地音效
+function sfxPeachDrop() {
+  playTone(400, 0.08, 'sine', 0.15);
+  setTimeout(() => playTone(300, 0.1, 'sine', 0.1), 50);
+}
+
+// 猴子偷桃音效
+function sfxMonkeySteal() {
+  playTone(600, 0.06, 'square', 0.1);
+  setTimeout(() => playTone(800, 0.08, 'square', 0.1), 80);
+  setTimeout(() => playTone(500, 0.06, 'square', 0.08), 160);
+}// ============================================================
+// 初始化
+// ============================================================
+renderHome();
+</script>
+</body>
+</html>
