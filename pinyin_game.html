@@ -1596,7 +1596,7 @@ body {
   max-width: 480px;
   margin: 0 auto;
   display: none;
-  background: linear-gradient(170deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  background: linear-gradient(170deg, #fff0e6 0%, #ffe4d4 30%, #ffd4be 60%, #ffc8a8 100%);
   border-radius: 0;
 }
 .lb-header {
@@ -1605,19 +1605,19 @@ body {
 }
 .lb-title {
   font-size: 1.8em;
-  color: #ffd700;
-  text-shadow: 0 0 20px rgba(255,215,0,0.4), 2px 3px 8px rgba(0,0,0,0.3);
+  color: #d35400;
+  text-shadow: 1px 2px 4px rgba(211,84,0,0.15);
   margin-bottom: 2px;
 }
 .lb-subtitle {
-  color: rgba(255,255,255,0.7);
+  color: #a04000;
   font-size: 0.9em;
 }
 .lb-back-btn {
   display: inline-block;
-  background: rgba(255,255,255,0.15);
-  color: rgba(255,255,255,0.9);
-  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(211,84,0,0.1);
+  color: #a04000;
+  border: 1px solid rgba(211,84,0,0.2);
   border-radius: 20px;
   padding: 6px 16px;
   font-size: 0.9em;
@@ -1625,9 +1625,8 @@ body {
   margin-bottom: 8px;
   font-family: inherit;
   transition: background 0.2s;
-  backdrop-filter: blur(4px);
 }
-.lb-back-btn:hover { background: rgba(255,255,255,0.25); }
+.lb-back-btn:hover { background: rgba(211,84,0,0.2); }
 .lb-list {
   display: flex;
   flex-direction: column;
@@ -1635,8 +1634,8 @@ body {
   margin-top: 12px;
 }
 .lb-item {
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.75);
+  border: 1px solid rgba(211,84,0,0.08);
   border-radius: 14px;
   padding: 10px 14px;
   display: flex;
@@ -1645,97 +1644,123 @@ body {
   transition: transform 0.2s, background 0.2s;
   position: relative;
   overflow: hidden;
+  backdrop-filter: blur(4px);
 }
 .lb-item:hover {
   transform: translateY(-2px);
-  background: rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.9);
 }
 .lb-item.lb-self {
-  background: linear-gradient(135deg, rgba(255,180,162,0.25), rgba(229,152,155,0.18));
-  border: 2px solid rgba(255,180,162,0.6);
-  box-shadow: 0 0 16px rgba(255,180,162,0.2);
+  background: linear-gradient(135deg, rgba(255,152,67,0.25), rgba(255,112,67,0.15));
+  border: 2px solid rgba(255,112,67,0.5);
+  box-shadow: 0 0 16px rgba(255,112,67,0.15);
 }
 .lb-rank {
-  font-size: 1.1em;
+  font-size: 1.15em;
   font-weight: bold;
-  width: 32px;
+  width: 36px;
   text-align: center;
   flex-shrink: 0;
-  color: rgba(255,255,255,0.5);
+  color: #8b5e3c;
 }
-.lb-rank-1 { color: #ffd700; text-shadow: 0 0 8px rgba(255,215,0,0.5); }
-.lb-rank-2 { color: #c0c0c0; text-shadow: 0 0 6px rgba(192,192,192,0.4); }
-.lb-rank-3 { color: #cd7f32; text-shadow: 0 0 6px rgba(205,127,50,0.4); }
+.lb-rank-1 { color: #e65100; text-shadow: 0 0 8px rgba(230,81,0,0.3); font-size: 1.3em; }
+.lb-rank-2 { color: #bf360c; text-shadow: 0 0 6px rgba(191,54,12,0.2); font-size: 1.2em; }
+.lb-rank-3 { color: #d84315; text-shadow: 0 0 6px rgba(216,67,21,0.2); font-size: 1.15em; }
 .lb-nickname {
   flex: 1;
   font-size: 1em;
   font-weight: bold;
-  color: rgba(255,255,255,0.9);
+  color: #4e342e;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 .lb-peach-count {
   font-size: 1em;
-  color: #ffb4a2;
+  color: #e65100;
   font-weight: bold;
   flex-shrink: 0;
   min-width: 60px;
   text-align: right;
 }
 .lb-medal {
-  font-size: 1.4em;
+  font-size: 1.5em;
   flex-shrink: 0;
-  width: 30px;
+  width: 32px;
   text-align: center;
 }
 .lb-empty {
   text-align: center;
   padding: 40px 20px;
-  color: rgba(255,255,255,0.5);
+  color: #8b5e3c;
   font-size: 1.1em;
 }
 .lb-empty-emoji {
   font-size: 3em;
   margin-bottom: 10px;
 }
-.lb-current-user {
-  background: rgba(255,255,255,0.1);
-  border: 1px solid rgba(255,255,255,0.15);
-  border-radius: 20px;
-  padding: 5px 14px;
-  font-size: 0.82em;
-  color: rgba(255,255,255,0.7);
+/* 当前用户信息卡片（底部） */
+.lb-my-card {
+  margin-top: 16px;
+  background: linear-gradient(135deg, rgba(255,112,67,0.18), rgba(255,152,67,0.12));
+  border: 2px solid rgba(255,112,67,0.35);
+  border-radius: 16px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 4px 20px rgba(255,112,67,0.12);
+}
+.lb-my-card .lb-my-rank {
+  font-size: 1.4em;
   font-weight: bold;
-  backdrop-filter: blur(4px);
-  margin-top: 8px;
-  display: inline-block;
+  color: #e65100;
+  min-width: 44px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.lb-my-card .lb-my-rank.lb-my-rank-low {
+  font-size: 1.1em;
+  color: #bf360c;
+}
+.lb-my-card .lb-my-info {
+  flex: 1;
+}
+.lb-my-card .lb-my-name {
+  font-size: 1em;
+  font-weight: bold;
+  color: #4e342e;
+}
+.lb-my-card .lb-my-peaches {
+  font-size: 0.9em;
+  color: #e65100;
+  font-weight: bold;
 }
 /* 前3名特殊高亮 */
 .lb-item.lb-top1 {
-  background: linear-gradient(135deg, rgba(255,215,0,0.2), rgba(255,193,7,0.08));
-  border: 1px solid rgba(255,215,0,0.35);
-  box-shadow: 0 4px 20px rgba(255,215,0,0.15);
+  background: linear-gradient(135deg, rgba(255,152,67,0.22), rgba(255,193,7,0.1));
+  border: 1px solid rgba(255,152,67,0.4);
+  box-shadow: 0 4px 20px rgba(255,152,67,0.18);
   padding: 14px 14px;
 }
-.lb-item.lb-top1 .lb-nickname { color: #ffd700; font-size: 1.1em; }
-.lb-item.lb-top1 .lb-peach-count { color: #ffd700; font-size: 1.1em; }
+.lb-item.lb-top1 .lb-nickname { color: #bf360c; font-size: 1.1em; }
+.lb-item.lb-top1 .lb-peach-count { color: #e65100; font-size: 1.1em; }
 .lb-item.lb-top2 {
-  background: linear-gradient(135deg, rgba(192,192,192,0.18), rgba(192,192,192,0.06));
-  border: 1px solid rgba(192,192,192,0.3);
-  box-shadow: 0 3px 16px rgba(192,192,192,0.1);
+  background: linear-gradient(135deg, rgba(255,138,101,0.15), rgba(255,138,101,0.06));
+  border: 1px solid rgba(191,54,12,0.25);
+  box-shadow: 0 3px 14px rgba(191,54,12,0.1);
   padding: 12px 14px;
 }
-.lb-item.lb-top2 .lb-nickname { color: #e0e0e0; }
-.lb-item.lb-top2 .lb-peach-count { color: #e0e0e0; }
+.lb-item.lb-top2 .lb-nickname { color: #bf360c; }
+.lb-item.lb-top2 .lb-peach-count { color: #d84315; }
 .lb-item.lb-top3 {
-  background: linear-gradient(135deg, rgba(205,127,50,0.18), rgba(205,127,50,0.06));
-  border: 1px solid rgba(205,127,50,0.3);
-  box-shadow: 0 3px 14px rgba(205,127,50,0.1);
+  background: linear-gradient(135deg, rgba(255,167,38,0.12), rgba(255,167,38,0.05));
+  border: 1px solid rgba(216,67,21,0.22);
+  box-shadow: 0 3px 12px rgba(216,67,21,0.08);
   padding: 12px 14px;
 }
-.lb-item.lb-top3 .lb-nickname { color: #cd7f32; }
-.lb-item.lb-top3 .lb-peach-count { color: #e8a862; }
+.lb-item.lb-top3 .lb-nickname { color: #d84315; }
+.lb-item.lb-top3 .lb-peach-count { color: #e65100; }
 </style>
 </head>
 <body>
@@ -1783,8 +1808,8 @@ body {
     <div class="lb-title">🏆 桃子排行榜</div>
     <div class="lb-subtitle">看看谁是摘桃小能手！</div>
   </div>
-  <div class="lb-current-user" id="lb-nickname-display"></div>
   <div class="lb-list" id="lb-list"></div>
+  <div id="lb-my-card"></div>
 </div>
 
 <!-- ===== 关卡列表页（某分类下的关卡） ===== -->
@@ -3545,7 +3570,7 @@ document.addEventListener('keydown', function(e) {
 });
 
 // ============================================================
-// 排行榜系统（30名 + 当前用户真实排名）
+// 排行榜系统（20名 + 当前用户真实排名展示）
 // ============================================================
 
 // 随机昵称池
@@ -3585,7 +3610,7 @@ function generateFakeLeaderboard() {
   const fakeEntries = [];
 
   for (let i = 0; i < 30 && i < shuffled.length; i++) {
-    // 桃子数 10-300 之间，偏向中间值
+    // 桃子数 10-300 之间
     const base = rng();
     const peaches = Math.round(10 + base * 290);
     fakeEntries.push({
@@ -3602,14 +3627,15 @@ function getFullLeaderboard() {
   const fakeList = generateFakeLeaderboard();
 
   // 当前用户真实桃子数
+  let myPeaches = 0;
+  let myRank = -1;
   if (currentNickname) {
-    let total = 0;
     for (let ci = 0; ci < CATEGORIES.length; ci++) {
-      total += getCatTotalPeaches(ci);
+      myPeaches += getCatTotalPeaches(ci);
     }
     fakeList.push({
       nickname: currentNickname,
-      peaches: total,
+      peaches: myPeaches,
       isFake: false
     });
   }
@@ -3617,15 +3643,20 @@ function getFullLeaderboard() {
   // 按桃子数降序排列
   fakeList.sort((a, b) => b.peaches - a.peaches);
 
-  // 取前30名
-  return fakeList.slice(0, 30);
+  // 找到当前用户的全局排名
+  if (currentNickname) {
+    myRank = fakeList.findIndex(e => !e.isFake) + 1;
+  }
+
+  // 取前20名用于展示
+  const top20 = fakeList.slice(0, 20);
+
+  return { top20, myRank, myPeaches };
 }
 
 function showLeaderboard() {
   document.getElementById('category-screen').style.display = 'none';
   document.getElementById('leaderboard-screen').style.display = 'block';
-  document.getElementById('lb-nickname-display').textContent =
-    currentNickname ? '当前用户：' + currentNickname : '';
   renderLeaderboard();
   sfxClick();
 }
@@ -3637,13 +3668,16 @@ function hideLeaderboard() {
 }
 
 function renderLeaderboard() {
-  const lb = getFullLeaderboard();
+  const { top20, myRank, myPeaches } = getFullLeaderboard();
   const listEl = document.getElementById('lb-list');
+  const myCardEl = document.getElementById('lb-my-card');
   listEl.innerHTML = '';
+  myCardEl.innerHTML = '';
 
   const medals = ['🥇', '🥈', '🥉'];
 
-  lb.forEach((entry, i) => {
+  // 渲染前20名
+  top20.forEach((entry, i) => {
     const item = document.createElement('div');
     const isSelf = !entry.isFake;
     let cls = 'lb-item';
@@ -3666,6 +3700,22 @@ function renderLeaderboard() {
 
     listEl.appendChild(item);
   });
+
+  // 渲染底部"我的排名"卡片
+  if (currentNickname && myRank > 0) {
+    const inTop20 = myRank <= 20;
+    const rankText = inTop20 ? myRank : myRank + '+';
+    const rankClass = inTop20 ? '' : ' lb-my-rank-low';
+
+    myCardEl.innerHTML =
+      '<div class="lb-my-card">' +
+        '<div class="lb-my-rank' + rankClass + '">第' + rankText + '名</div>' +
+        '<div class="lb-my-info">' +
+          '<div class="lb-my-name">' + escapeHtml(currentNickname) + '（我）</div>' +
+          '<div class="lb-my-peaches">🍑 ' + myPeaches + ' 个桃子</div>' +
+        '</div>' +
+      '</div>';
+  }
 }
 
 function escapeHtml(str) {
