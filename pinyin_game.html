@@ -2477,11 +2477,14 @@ function showQuestion() {
 
     const grid = document.getElementById('options-grid');
     grid.innerHTML = '';
-    q.options.forEach((opt, i) => {
+    // 打乱选项顺序，避免正确答案总在固定位置
+    const correctText = q.options[q.correct];
+    const shuffledOpts = shuffle([...q.options]);
+    shuffledOpts.forEach(opt => {
       const btn = document.createElement('button');
       btn.className = 'option-btn';
       btn.textContent = opt;
-      btn.onclick = () => handleAnswer(btn, opt, q.options[q.correct], q);
+      btn.onclick = () => handleAnswer(btn, opt, correctText, q);
       grid.appendChild(btn);
     });
   }
