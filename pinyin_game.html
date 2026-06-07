@@ -89,6 +89,8 @@ body {
 .cat-card:hover { transform: translateY(-4px); box-shadow: 0 8px 28px rgba(0,0,0,0.14); }
 .cat-card:active { transform: scale(0.97); }
 .cat-emoji { font-size: 2.6em; line-height: 1; margin-bottom: 6px; }
+.cat-icon { width: 56px; height: 56px; margin: 0 auto 6px; }
+.cat-icon svg { width: 100%; height: 100%; }
 .cat-name { font-size: 1.05em; color: #2d3436; font-weight: bold; margin-bottom: 4px; }
 .cat-desc { font-size: 0.78em; color: #888; margin-bottom: 6px; }
 .cat-progress { font-size: 0.72em; color: #6d4c41; }
@@ -1889,6 +1891,165 @@ body {
 
 <script>
 // ============================================================
+// 扁平卡通风格 SVG 图标
+// ============================================================
+const CAT_ICONS = {
+  // 1. 拼音 - 音符
+  pinyin: `<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="8" y="8" width="64" height="64" rx="18" fill="#FFF3E0"/>
+    <ellipse cx="30" cy="54" rx="9" ry="7" fill="#FF8A65"/>
+    <rect x="37" y="22" width="4" height="34" rx="2" fill="#FF8A65"/>
+    <path d="M39 22 C39 22 52 18 54 26" stroke="#FF8A65" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+    <ellipse cx="54" cy="28" rx="8" ry="6" fill="#FFAB91"/>
+    <circle cx="56" cy="30" r="2" fill="#FFF3E0" opacity="0.6"/>
+  </svg>`,
+  // 2. 多音字 - 分叉箭头
+  polyphone: `<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="8" y="8" width="64" height="64" rx="18" fill="#E3F2FD"/>
+    <path d="M28 52 L28 30" stroke="#42A5F5" stroke-width="4" stroke-linecap="round"/>
+    <path d="M28 30 L18 20" stroke="#42A5F5" stroke-width="4" stroke-linecap="round"/>
+    <path d="M28 30 L38 20" stroke="#42A5F5" stroke-width="4" stroke-linecap="round"/>
+    <polygon points="15,23 21,23 18,17" fill="#42A5F5"/>
+    <polygon points="35,23 41,23 38,17" fill="#42A5F5"/>
+    <circle cx="52" cy="40" r="12" fill="#90CAF9"/>
+    <text x="52" y="45" text-anchor="middle" font-size="14" font-weight="bold" fill="#1565C0" font-family="sans-serif">音</text>
+  </svg>`,
+  // 3. 形近字 - 眼睛
+  similar: `<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="8" y="8" width="64" height="64" rx="18" fill="#E8F5E9"/>
+    <ellipse cx="40" cy="40" rx="24" ry="14" fill="#A5D6A7"/>
+    <ellipse cx="40" cy="40" rx="24" ry="14" stroke="#66BB6A" stroke-width="2.5" fill="none"/>
+    <circle cx="40" cy="40" r="8" fill="#388E3C"/>
+    <circle cx="37" cy="37" r="3" fill="#FFF" opacity="0.7"/>
+    <path d="M16 40 Q28 26 40 26 Q52 26 64 40" stroke="#66BB6A" stroke-width="2" fill="none"/>
+    <path d="M16 40 Q28 54 40 54 Q52 54 64 40" stroke="#66BB6A" stroke-width="2" fill="none"/>
+  </svg>`,
+  // 4. 近义词 - 链接/握手
+  synonym: `<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="8" y="8" width="64" height="64" rx="18" fill="#FFF8E1"/>
+    <circle cx="28" cy="40" r="13" fill="#FFD54F"/>
+    <circle cx="52" cy="40" r="13" fill="#FFB300"/>
+    <path d="M34 36 L46 36" stroke="#FFF8E1" stroke-width="3" stroke-linecap="round"/>
+    <path d="M34 44 L46 44" stroke="#FFF8E1" stroke-width="3" stroke-linecap="round"/>
+    <text x="28" y="44" text-anchor="middle" font-size="12" font-weight="bold" fill="#F57F17" font-family="sans-serif">近</text>
+    <text x="52" y="44" text-anchor="middle" font-size="12" font-weight="bold" fill="#FFF8E1" font-family="sans-serif">似</text>
+  </svg>`,
+  // 5. 反义词 - 对比箭头
+  antonym: `<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="8" y="8" width="64" height="64" rx="18" fill="#FCE4EC"/>
+    <path d="M22 52 L22 28" stroke="#EF5350" stroke-width="4" stroke-linecap="round"/>
+    <polygon points="16,32 28,32 22,24" fill="#EF5350"/>
+    <path d="M58 28 L58 52" stroke="#42A5F5" stroke-width="4" stroke-linecap="round"/>
+    <polygon points="52,48 64,48 58,56" fill="#42A5F5"/>
+    <rect x="32" y="34" width="16" height="12" rx="4" fill="#FFCDD2"/>
+    <text x="40" y="44" text-anchor="middle" font-size="10" font-weight="bold" fill="#C62828" font-family="sans-serif">反</text>
+  </svg>`,
+  // 6. 古诗 - 卷轴
+  poem: `<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="8" y="8" width="64" height="64" rx="18" fill="#F3E5F5"/>
+    <rect x="22" y="22" width="36" height="40" rx="3" fill="#CE93D8"/>
+    <rect x="18" y="20" width="8" height="44" rx="4" fill="#AB47BC"/>
+    <rect x="54" y="20" width="8" height="44" rx="4" fill="#AB47BC"/>
+    <line x1="30" y1="32" x2="48" y2="32" stroke="#F3E5F5" stroke-width="2" stroke-linecap="round"/>
+    <line x1="30" y1="39" x2="48" y2="39" stroke="#F3E5F5" stroke-width="2" stroke-linecap="round"/>
+    <line x1="30" y1="46" x2="42" y2="46" stroke="#F3E5F5" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="36" cy="30" r="1.5" fill="#F3E5F5" opacity="0.5"/>
+  </svg>`,
+  // 7. 成语 - 宝石
+  idiom: `<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="8" y="8" width="64" height="64" rx="18" fill="#E0F7FA"/>
+    <polygon points="40,18 56,34 48,58 32,58 24,34" fill="#4DD0E1"/>
+    <polygon points="40,18 48,34 40,58 32,34" fill="#26C6DA" opacity="0.7"/>
+    <polygon points="40,18 56,34 48,34" fill="#80DEEA"/>
+    <line x1="24" y1="34" x2="56" y2="34" stroke="#00ACC1" stroke-width="1.5"/>
+    <line x1="40" y1="18" x2="32" y2="34" stroke="#00ACC1" stroke-width="1"/>
+    <line x1="40" y1="18" x2="48" y2="34" stroke="#00ACC1" stroke-width="1"/>
+    <circle cx="38" cy="30" r="2" fill="#FFF" opacity="0.5"/>
+  </svg>`,
+  // 8. 重叠词 - 调色盘
+  redup: `<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="8" y="8" width="64" height="64" rx="18" fill="#FFF3E0"/>
+    <ellipse cx="40" cy="42" rx="22" ry="18" fill="#FFAB91"/>
+    <circle cx="32" cy="36" r="5" fill="#EF5350"/>
+    <circle cx="44" cy="33" r="5" fill="#42A5F5"/>
+    <circle cx="50" cy="43" r="5" fill="#66BB6A"/>
+    <circle cx="36" cy="47" r="5" fill="#FDD835"/>
+    <ellipse cx="54" cy="50" rx="6" ry="5" fill="#FFF3E0"/>
+    <path d="M20 42 Q22 56 36 58" stroke="#E64A19" stroke-width="2" stroke-linecap="round" fill="none"/>
+  </svg>`,
+  // 9. 课文背诵 - 打开的书
+  recite: `<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="8" y="8" width="64" height="64" rx="18" fill="#E8EAF6"/>
+    <path d="M18 22 L40 26 L40 60 L18 56 Z" fill="#7986CB"/>
+    <path d="M62 22 L40 26 L40 60 L62 56 Z" fill="#5C6BC0"/>
+    <line x1="24" y1="32" x2="36" y2="34" stroke="#C5CAE9" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="24" y1="38" x2="36" y2="40" stroke="#C5CAE9" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="24" y1="44" x2="34" y2="46" stroke="#C5CAE9" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="44" y1="34" x2="56" y2="32" stroke="#9FA8DA" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="44" y1="40" x2="56" y2="38" stroke="#9FA8DA" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="44" y1="46" x2="54" y2="44" stroke="#9FA8DA" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M18 22 Q29 20 40 26" stroke="#3F51B5" stroke-width="2" fill="none"/>
+    <path d="M40 26 Q51 20 62 22" stroke="#3F51B5" stroke-width="2" fill="none"/>
+  </svg>`
+};
+
+// 关卡列表也用 SVG 图标
+const CAT_LEVEL_ICONS = {
+  pinyin: {
+    '🍂': `<svg viewBox="0 0 80 80"><rect x="8" y="8" width="64" height="64" rx="18" fill="#FFF8E1"/><path d="M40 22 C40 22 28 32 28 42 C28 52 34 56 40 56 C46 56 52 52 52 42 C52 32 40 22 40 22Z" fill="#FFB74D"/><line x1="40" y1="30" x2="40" y2="52" stroke="#E65100" stroke-width="2"/><path d="M36 40 L40 36" stroke="#E65100" stroke-width="1.5" stroke-linecap="round"/><path d="M44 44 L40 40" stroke="#E65100" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+    '🏫': `<svg viewBox="0 0 80 80"><rect x="8" y="8" width="64" height="64" rx="18" fill="#E3F2FD"/><rect x="24" y="30" width="32" height="26" rx="2" fill="#64B5F6"/><rect x="30" y="36" width="8" height="8" rx="1" fill="#E3F2FD"/><rect x="42" y="36" width="8" height="8" rx="1" fill="#E3F2FD"/><rect x="36" y="48" width="8" height="8" fill="#42A5F5"/><polygon points="40,18 22,30 58,30" fill="#90CAF9"/></svg>`,
+    '📖': `<svg viewBox="0 0 80 80"><rect x="8" y="8" width="64" height="64" rx="18" fill="#F3E5F5"/><rect x="22" y="24" width="16" height="28" rx="2" fill="#AB47BC"/><rect x="42" y="24" width="16" height="28" rx="2" fill="#CE93D8"/><line x1="26" y1="32" x2="34" y2="32" stroke="#E1BEE7" stroke-width="1.5"/><line x1="26" y1="37" x2="34" y2="37" stroke="#E1BEE7" stroke-width="1.5"/><line x1="46" y1="32" x2="54" y2="32" stroke="#E1BEE7" stroke-width="1.5"/><line x1="46" y1="37" x2="54" y2="37" stroke="#E1BEE7" stroke-width="1.5"/></svg>`,
+    '🏮': `<svg viewBox="0 0 80 80"><rect x="8" y="8" width="64" height="64" rx="18" fill="#FFEBEE"/><ellipse cx="40" cy="44" rx="16" ry="18" fill="#EF5350"/><rect x="36" y="22" width="8" height="6" rx="2" fill="#FFC107"/><line x1="40" y1="28" x2="40" y2="62" stroke="#FFC107" stroke-width="1.5"/><line x1="32" y1="44" x2="48" y2="44" stroke="#FFC107" stroke-width="1.5"/><rect x="34" y="60" width="12" height="4" rx="2" fill="#FFC107"/></svg>`,
+    '🍜': `<svg viewBox="0 0 80 80"><rect x="8" y="8" width="64" height="64" rx="18" fill="#FFF3E0"/><ellipse cx="40" cy="44" rx="20" ry="12" fill="#FF8A65"/><ellipse cx="40" cy="42" rx="20" ry="12" fill="#FFAB91"/><path d="M30 36 Q32 30 34 36" stroke="#FFD54F" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M38 34 Q40 26 42 34" stroke="#FFD54F" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M46 36 Q48 30 50 36" stroke="#FFD54F" stroke-width="2" fill="none" stroke-linecap="round"/></svg>`,
+    '🍳': `<svg viewBox="0 0 80 80"><rect x="8" y="8" width="64" height="64" rx="18" fill="#FFF8E1"/><circle cx="36" cy="40" r="16" fill="#FFE0B2"/><circle cx="36" cy="38" r="10" fill="#FFF9C4"/><ellipse cx="54" cy="52" rx="10" ry="4" fill="#8D6E63" transform="rotate(-25 54 52)"/></svg>`,
+    '🦊': `<svg viewBox="0 0 80 80"><rect x="8" y="8" width="64" height="64" rx="18" fill="#FFF3E0"/><path d="M24 30 L34 50 L46 50 L56 30 L48 24 L32 24 Z" fill="#FF8A65"/><circle cx="34" cy="38" r="3" fill="#3E2723"/><circle cx="46" cy="38" r="3" fill="#3E2723"/><path d="M36 44 L40 48 L44 44" stroke="#3E2723" stroke-width="2" stroke-linecap="round" fill="none"/><polygon points="28,30 32,24 24,24" fill="#FFAB91"/><polygon points="52,30 48,24 56,24" fill="#FFAB91"/></svg>`,
+    '🐢': `<svg viewBox="0 0 80 80"><rect x="8" y="8" width="64" height="64" rx="18" fill="#E8F5E9"/><ellipse cx="40" cy="42" rx="18" ry="14" fill="#66BB6A"/><ellipse cx="40" cy="40" rx="18" ry="14" fill="#81C784"/><circle cx="30" cy="28" r="5" fill="#A5D6A7"/><circle cx="32" cy="54" r="4" fill="#A5D6A7"/><circle cx="48" cy="54" r="4" fill="#A5D6A7"/><circle cx="32" cy="27" r="2" fill="#3E2723"/><line x1="40" y1="34" x2="40" y2="48" stroke="#4CAF50" stroke-width="1.5"/><line x1="30" y1="40" x2="50" y2="40" stroke="#4CAF50" stroke-width="1.5"/></svg>`,
+    '🌄': `<svg viewBox="0 0 80 80"><rect x="8" y="8" width="64" height="64" rx="18" fill="#FFF8E1"/><circle cx="40" cy="34" r="14" fill="#FFB74D"/><path d="M14 56 L28 42 L38 48 L54 34 L66 56 Z" fill="#81C784"/><path d="M14 56 L66 56 L66 62 L14 62 Z" fill="#66BB6A"/></svg>`,
+    '🐉': `<svg viewBox="0 0 80 80"><rect x="8" y="8" width="64" height="64" rx="18" fill="#E8EAF6"/><path d="M22 42 Q26 28 38 28 Q48 28 50 36 Q54 32 58 36 Q56 44 50 44 L26 44 Z" fill="#7986CB"/><circle cx="36" cy="36" r="2" fill="#FFF"/><circle cx="36" cy="36" r="1" fill="#1A237E"/><path d="M22 42 L18 46" stroke="#7986CB" stroke-width="3" stroke-linecap="round"/><path d="M50 44 Q52 50 48 54" stroke="#5C6BC0" stroke-width="2" stroke-linecap="round" fill="none"/><polygon points="54,32 60,28 58,36" fill="#EF5350"/></svg>`,
+    '🌸': `<svg viewBox="0 0 80 80"><rect x="8" y="8" width="64" height="64" rx="18" fill="#FCE4EC"/><circle cx="40" cy="40" r="6" fill="#F48FB1"/><circle cx="40" cy="28" r="8" fill="#F8BBD0"/><circle cx="50" cy="34" r="8" fill="#F8BBD0"/><circle cx="50" cy="46" r="8" fill="#F8BBD0"/><circle cx="40" cy="52" r="8" fill="#F8BBD0"/><circle cx="30" cy="46" r="8" fill="#F8BBD0"/><circle cx="30" cy="34" r="8" fill="#F8BBD0"/></svg>`,
+    '📝': `<svg viewBox="0 0 80 80"><rect x="8" y="8" width="64" height="64" rx="18" fill="#FFF3E0"/><rect x="22" y="22" width="30" height="38" rx="3" fill="#FFE0B2"/><line x1="28" y1="30" x2="46" y2="30" stroke="#FF8A65" stroke-width="2" stroke-linecap="round"/><line x1="28" y1="37" x2="46" y2="37" stroke="#FF8A65" stroke-width="2" stroke-linecap="round"/><line x1="28" y1="44" x2="40" y2="44" stroke="#FF8A65" stroke-width="2" stroke-linecap="round"/><rect x="46" y="48" width="10" height="4" rx="2" fill="#FF8A65" transform="rotate(-40 51 50)"/></svg>`,
+    '🔬': `<svg viewBox="0 0 80 80"><rect x="8" y="8" width="64" height="64" rx="18" fill="#E3F2FD"/><circle cx="36" cy="32" r="10" fill="#90CAF9" stroke="#42A5F5" stroke-width="2.5"/><line x1="36" y1="42" x2="36" y2="56" stroke="#42A5F5" stroke-width="3" stroke-linecap="round"/><line x1="28" y1="56" x2="44" y2="56" stroke="#42A5F5" stroke-width="3" stroke-linecap="round"/><circle cx="34" cy="30" r="3" fill="#42A5F5" opacity="0.4"/></svg>`,
+    '📚': `<svg viewBox="0 0 80 80"><rect x="8" y="8" width="64" height="64" rx="18" fill="#E8F5E9"/><rect x="20" y="26" width="14" height="28" rx="2" fill="#66BB6A"/><rect x="34" y="28" width="14" height="26" rx="2" fill="#81C784"/><rect x="48" y="24" width="12" height="30" rx="2" fill="#A5D6A7"/><line x1="24" y1="34" x2="30" y2="34" stroke="#FFF" stroke-width="1.5" stroke-linecap="round"/><line x1="38" y1="36" x2="44" y2="36" stroke="#FFF" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+    '🏆': `<svg viewBox="0 0 80 80"><rect x="8" y="8" width="64" height="64" rx="18" fill="#FFF8E1"/><path d="M30 24 L50 24 L48 44 Q44 50 40 50 Q36 50 32 44 Z" fill="#FFD54F"/><rect x="36" y="50" width="8" height="6" fill="#FFB300"/><rect x="30" y="56" width="20" height="4" rx="2" fill="#FF8F00"/><path d="M30 24 L24 24 Q20 24 20 30 Q20 38 28 38" stroke="#FFD54F" stroke-width="3" fill="none"/><path d="M50 24 L56 24 Q60 24 60 30 Q60 38 52 38" stroke="#FFD54F" stroke-width="3" fill="none"/></svg>`,
+  },
+  polyphone: {
+    '🔀': `<svg viewBox="0 0 80 80"><rect x="8" y="8" width="64" height="64" rx="18" fill="#E3F2FD"/><path d="M28 54 L28 30" stroke="#42A5F5" stroke-width="4" stroke-linecap="round"/><path d="M28 30 L18 20" stroke="#42A5F5" stroke-width="4" stroke-linecap="round"/><path d="M28 30 L38 20" stroke="#42A5F5" stroke-width="4" stroke-linecap="round"/><polygon points="15,23 21,23 18,17" fill="#42A5F5"/><polygon points="35,23 41,23 38,17" fill="#42A5F5"/></svg>`,
+  },
+  similar: {
+    '👀': `<svg viewBox="0 0 80 80"><rect x="8" y="8" width="64" height="64" rx="18" fill="#E8F5E9"/><ellipse cx="40" cy="40" rx="22" ry="13" fill="#A5D6A7" stroke="#66BB6A" stroke-width="2"/><circle cx="40" cy="40" r="7" fill="#388E3C"/><circle cx="38" cy="38" r="2.5" fill="#FFF" opacity="0.7"/></svg>`,
+  },
+  synonym: {
+    '🔗': `<svg viewBox="0 0 80 80"><rect x="8" y="8" width="64" height="64" rx="18" fill="#FFF8E1"/><circle cx="28" cy="40" r="13" fill="#FFD54F"/><circle cx="52" cy="40" r="13" fill="#FFB300"/><text x="28" y="44" text-anchor="middle" font-size="12" font-weight="bold" fill="#F57F17" font-family="sans-serif">近</text><text x="52" y="44" text-anchor="middle" font-size="12" font-weight="bold" fill="#FFF8E1" font-family="sans-serif">似</text></svg>`,
+  },
+  antonym: {
+    '⚡': `<svg viewBox="0 0 80 80"><rect x="8" y="8" width="64" height="64" rx="18" fill="#FCE4EC"/><path d="M22 52 L22 28" stroke="#EF5350" stroke-width="4" stroke-linecap="round"/><polygon points="16,32 28,32 22,24" fill="#EF5350"/><path d="M58 28 L58 52" stroke="#42A5F5" stroke-width="4" stroke-linecap="round"/><polygon points="52,48 64,48 58,56" fill="#42A5F5"/></svg>`,
+  },
+  poem: {
+    '📜': `<svg viewBox="0 0 80 80"><rect x="8" y="8" width="64" height="64" rx="18" fill="#F3E5F5"/><rect x="22" y="22" width="36" height="40" rx="3" fill="#CE93D8"/><rect x="18" y="20" width="8" height="44" rx="4" fill="#AB47BC"/><rect x="54" y="20" width="8" height="44" rx="4" fill="#AB47BC"/><line x1="30" y1="32" x2="48" y2="32" stroke="#F3E5F5" stroke-width="2"/><line x1="30" y1="39" x2="48" y2="39" stroke="#F3E5F5" stroke-width="2"/><line x1="30" y1="46" x2="42" y2="46" stroke="#F3E5F5" stroke-width="2"/></svg>`,
+  },
+  idiom: {
+    '💎': `<svg viewBox="0 0 80 80"><rect x="8" y="8" width="64" height="64" rx="18" fill="#E0F7FA"/><polygon points="40,18 56,34 48,58 32,58 24,34" fill="#4DD0E1"/><polygon points="40,18 48,34 40,58 32,34" fill="#26C6DA" opacity="0.7"/><polygon points="40,18 56,34 48,34" fill="#80DEEA"/><line x1="24" y1="34" x2="56" y2="34" stroke="#00ACC1" stroke-width="1.5"/></svg>`,
+  },
+  redup: {
+    '🎨': `<svg viewBox="0 0 80 80"><rect x="8" y="8" width="64" height="64" rx="18" fill="#FFF3E0"/><ellipse cx="40" cy="42" rx="22" ry="18" fill="#FFAB91"/><circle cx="32" cy="36" r="5" fill="#EF5350"/><circle cx="44" cy="33" r="5" fill="#42A5F5"/><circle cx="50" cy="43" r="5" fill="#66BB6A"/><circle cx="36" cy="47" r="5" fill="#FDD835"/><ellipse cx="54" cy="50" rx="6" ry="5" fill="#FFF3E0"/></svg>`,
+  },
+  recite: {
+    '📖': `<svg viewBox="0 0 80 80"><rect x="8" y="8" width="64" height="64" rx="18" fill="#E8EAF6"/><path d="M18 22 L40 26 L40 60 L18 56 Z" fill="#7986CB"/><path d="M62 22 L40 26 L40 60 L62 56 Z" fill="#5C6BC0"/><line x1="24" y1="32" x2="36" y2="34" stroke="#C5CAE9" stroke-width="1.5"/><line x1="24" y1="38" x2="36" y2="40" stroke="#C5CAE9" stroke-width="1.5"/><line x1="44" y1="34" x2="56" y2="32" stroke="#9FA8DA" stroke-width="1.5"/><line x1="44" y1="40" x2="56" y2="38" stroke="#9FA8DA" stroke-width="1.5"/></svg>`,
+  },
+};
+
+function getCatIcon(catId) {
+  return CAT_ICONS[catId] || '';
+}
+
+function getLevelIcon(catId, emoji) {
+  const catIcons = CAT_LEVEL_ICONS[catId];
+  if (catIcons && catIcons[emoji]) return catIcons[emoji];
+  // 回退：使用分类图标
+  return CAT_ICONS[catId] || '';
+}
+
+// ============================================================
 // 音效系统（Web Audio API，纯代码生成音效，无需外部文件）
 // ============================================================
 let audioCtx = null;
@@ -2467,7 +2628,7 @@ function renderCategories() {
 
     const card = document.createElement('div');
     card.className = 'cat-card';
-    card.innerHTML = `<div class="cat-emoji">${cat.emoji}</div>`
+    card.innerHTML = `<div class="cat-icon">${getCatIcon(cat.id)}</div>`
       + `<div class="cat-name">${cat.name}</div>`
       + `<div class="cat-desc">${cat.desc}</div>`
       + `<div class="cat-progress">${passedCount}/${totalLv}关  🍑${catPeaches}</div>`;
@@ -2498,7 +2659,7 @@ function renderCategoryLevels(catIdx) {
   const container = document.getElementById('card-grid');
   container.innerHTML = '';
 
-  document.getElementById('home-title').textContent = cat.emoji + ' ' + cat.name;
+  document.getElementById('home-title').innerHTML = '<span style="display:inline-block;width:36px;height:36px;vertical-align:middle;">' + getCatIcon(cat.id) + '</span> ' + cat.name;
   document.getElementById('home-subtitle').textContent = cat.desc;
 
   cat.levels.forEach((lv, i) => {
@@ -2522,7 +2683,7 @@ function renderCategoryLevels(catIdx) {
       starsHtml = '🤍🤍🤍';
     }
 
-    let inner = '<div class="card-emoji">' + lv.emoji + '</div>';
+    let inner = '<div class="cat-icon" style="width:48px;height:48px;">' + getLevelIcon(cat.id, lv.emoji) + '</div>';
     inner += '<div class="card-level">第' + (i + 1) + '关</div>';
     inner += '<div class="card-name">' + lv.name + '</div>';
     inner += '<div class="card-stars">' + starsHtml + '</div>';
