@@ -1499,9 +1499,221 @@ body {
 #win-title { margin: 12px 0 6px; font-size: 1.3em; color: #d35400; word-break: keep-all; }
 #win-msg { margin: 4px 0 10px; font-size: 0.95em; color: #555; }
 .result-harvest .result-btn { margin: 4px; min-width: 140px; }
+
+/* ===== 登录页面 ===== */
+#login-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.login-box {
+  background: rgba(255,255,255,0.95);
+  border-radius: 28px;
+  padding: 40px 32px 36px;
+  text-align: center;
+  box-shadow: 0 8px 40px rgba(255,107,129,0.18), 0 2px 12px rgba(0,0,0,0.06);
+  max-width: 380px;
+  width: 100%;
+  animation: loginPop 0.5s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes loginPop {
+  0%   { transform: scale(0.8) translateY(30px); opacity: 0; }
+  100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+.login-emoji {
+  font-size: 4em;
+  margin-bottom: 8px;
+  animation: loginBounce 1.2s ease infinite;
+}
+@keyframes loginBounce {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-10px); }
+}
+.login-title {
+  font-size: 1.6em;
+  color: #e17055;
+  margin-bottom: 4px;
+}
+.login-subtitle {
+  font-size: 0.95em;
+  color: #b2bec3;
+  margin-bottom: 24px;
+}
+.login-input {
+  width: 100%;
+  border: 2px solid #dfe6e9;
+  border-radius: 16px;
+  padding: 14px 18px;
+  font-size: 1.1em;
+  font-family: inherit;
+  text-align: center;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+  margin-bottom: 18px;
+  color: #2d3436;
+}
+.login-input:focus {
+  border-color: #ffb4a2;
+  box-shadow: 0 0 0 4px rgba(255,180,162,0.18);
+}
+.login-input::placeholder {
+  color: #b2bec3;
+}
+.login-btn {
+  background: linear-gradient(135deg, #ffb4a2, #e5989b);
+  color: #fff;
+  border: none;
+  border-radius: 16px;
+  padding: 14px 0;
+  width: 100%;
+  font-size: 1.15em;
+  font-family: inherit;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.2s;
+  box-shadow: 0 4px 16px rgba(229,152,155,0.25);
+}
+.login-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(229,152,155,0.35);
+}
+.login-btn:active { transform: scale(0.97); }
+.login-hint {
+  font-size: 0.78em;
+  color: #b2bec3;
+  margin-top: 14px;
+}
+
+/* ===== 排行榜页面 ===== */
+#leaderboard-screen {
+  min-height: 100vh;
+  padding: 20px 16px 40px;
+  max-width: 900px;
+  margin: 0 auto;
+  display: none;
+}
+.lb-header {
+  text-align: center;
+  padding: 16px 0 12px;
+}
+.lb-title {
+  font-size: 2em;
+  color: #fff;
+  text-shadow: 2px 3px 8px rgba(255,107,129,0.5);
+  margin-bottom: 4px;
+}
+.lb-subtitle {
+  color: rgba(255,255,255,0.85);
+  font-size: 0.95em;
+}
+.lb-back-btn {
+  display: inline-block;
+  background: rgba(255,255,255,0.6);
+  color: #6d4c41;
+  border: none;
+  border-radius: 20px;
+  padding: 6px 16px;
+  font-size: 0.9em;
+  cursor: pointer;
+  margin-bottom: 12px;
+  font-family: inherit;
+  transition: background 0.2s;
+}
+.lb-back-btn:hover { background: rgba(255,255,255,0.85); }
+.lb-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 16px;
+}
+.lb-item {
+  background: rgba(255,255,255,0.92);
+  border-radius: 18px;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 3px 14px rgba(0,0,0,0.06);
+  transition: transform 0.2s, box-shadow 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.lb-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+}
+.lb-item.lb-self {
+  background: linear-gradient(135deg, rgba(255,180,162,0.18), rgba(229,152,155,0.12));
+  border: 2px solid rgba(255,180,162,0.5);
+}
+.lb-rank {
+  font-size: 1.6em;
+  font-weight: bold;
+  width: 44px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.lb-rank-1 { color: #f9c74f; }
+.lb-rank-2 { color: #b0b0b0; }
+.lb-rank-3 { color: #e09b5a; }
+.lb-info {
+  flex: 1;
+  text-align: left;
+}
+.lb-nickname {
+  font-size: 1.05em;
+  font-weight: bold;
+  color: #2d3436;
+}
+.lb-peaches {
+  font-size: 0.85em;
+  color: #e17055;
+  font-weight: bold;
+}
+.lb-medal {
+  font-size: 2em;
+  flex-shrink: 0;
+}
+.lb-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: rgba(255,255,255,0.7);
+  font-size: 1.1em;
+}
+.lb-empty-emoji {
+  font-size: 3em;
+  margin-bottom: 10px;
+}
+.lb-current-user {
+  background: rgba(255,255,255,0.45);
+  border-radius: 20px;
+  padding: 5px 14px;
+  font-size: 0.82em;
+  color: #6d4c41;
+  font-weight: bold;
+  backdrop-filter: blur(4px);
+  margin-top: 10px;
+  display: inline-block;
+}
 </style>
 </head>
 <body>
+
+<!-- ===== 登录页面 ===== -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-emoji">🍑</div>
+    <div class="login-title">欢迎来到摘桃子！</div>
+    <div class="login-subtitle">输入你的昵称，开始冒险吧</div>
+    <input class="login-input" id="login-nickname" type="text" maxlength="10"
+           placeholder="输入昵称（最多10个字）" autocomplete="off" />
+    <button class="login-btn" id="login-btn" onclick="doLogin()">🍑 开始摘桃子</button>
+    <div class="login-hint">昵称将用于排行榜展示</div>
+  </div>
+</div>
 
 <!-- 音效开关 -->
 <button class="sound-toggle" id="sound-toggle" onclick="toggleSound()">🔊</button>
@@ -1509,7 +1721,7 @@ body {
 <button class="bgm-toggle bgm-off" id="bgm-toggle" onclick="toggleBgm()">🎵</button>
 
 <!-- ===== 分类选择首页 ===== -->
-<div id="category-screen">
+<div id="category-screen" style="display:none">
   <div class="cat-header">
     <div class="cat-title">🍑 摘桃子 · 语文大冒险</div>
     <div class="cat-subtitle">二年级上册 · 选择类型闯关</div>
@@ -1518,8 +1730,23 @@ body {
       <span>⭐ <span id="cat-total-passed">0</span>关</span>
       <span>🎯 <span id="cat-total-acc">—</span></span>
     </div>
+    <div class="lb-current-user" id="cat-nickname-display"></div>
   </div>
   <div class="cat-grid" id="cat-grid"></div>
+  <div style="text-align:center; margin-top:18px;">
+    <button class="home-back-btn" style="font-size:1em;padding:10px 28px;border-radius:24px;" onclick="showLeaderboard()">🏆 排行榜</button>
+  </div>
+</div>
+
+<!-- ===== 排行榜页面 ===== -->
+<div id="leaderboard-screen">
+  <button class="lb-back-btn" onclick="hideLeaderboard()">← 返回首页</button>
+  <div class="lb-header">
+    <div class="lb-title">🏆 桃子排行榜</div>
+    <div class="lb-subtitle">看看谁是摘桃小能手！</div>
+  </div>
+  <div class="lb-current-user" id="lb-nickname-display"></div>
+  <div class="lb-list" id="lb-list"></div>
 </div>
 
 <!-- ===== 关卡列表页（某分类下的关卡） ===== -->
@@ -2208,6 +2435,20 @@ function isLevelPassed(catIdx, lvIdx) {
 // 分类选择页
 // ============================================================
 function renderCategories() {
+  // 更新首页昵称显示
+  const display = document.getElementById('cat-nickname-display');
+  if (display) {
+    display.textContent = currentNickname ? currentNickname + '（点击可重新登录）' : '';
+    display.style.cursor = 'pointer';
+    display.onclick = function() {
+      if (confirm('要重新登录吗？')) {
+        localStorage.removeItem('pinyinGame_nickname');
+        currentNickname = '';
+        checkLogin();
+      }
+    };
+  }
+
   const p = loadProgress();
   const passed = p.passed || [];
   const container = document.getElementById('cat-grid');
@@ -3065,9 +3306,184 @@ function sfxMonkeySteal() {
   setTimeout(() => playTone(800, 0.08, 'square', 0.1), 80);
   setTimeout(() => playTone(500, 0.06, 'square', 0.08), 160);
 }// ============================================================
-// 初始化
+// 登录系统
 // ============================================================
-renderCategories();
+let currentNickname = '';
+
+function checkLogin() {
+  const saved = localStorage.getItem('pinyinGame_nickname');
+  if (saved) {
+    currentNickname = saved;
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('category-screen').style.display = 'block';
+    renderCategories();
+  } else {
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('category-screen').style.display = 'none';
+  }
+}
+
+function doLogin() {
+  const input = document.getElementById('login-nickname');
+  const nick = input.value.trim();
+  if (!nick) {
+    input.style.borderColor = '#e74c3c';
+    input.setAttribute('placeholder', '请输入昵称哦～');
+    return;
+  }
+  currentNickname = nick;
+  localStorage.setItem('pinyinGame_nickname', nick);
+  // 切换界面
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('category-screen').style.display = 'block';
+  renderCategories();
+  sfxClick();
+}
+
+// 回车登录
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && document.getElementById('login-screen').style.display !== 'none') {
+    doLogin();
+  }
+});
+
+// ============================================================
+// 排行榜系统
+// ============================================================
+function getLeaderboard() {
+  try {
+    return JSON.parse(localStorage.getItem('pinyinGame_leaderboard') || '[]');
+  } catch(e) { return []; }
+}
+
+function saveLeaderboard(lb) {
+  localStorage.setItem('pinyinGame_leaderboard', JSON.stringify(lb));
+}
+
+function updateLeaderboard(nickname, totalPeaches) {
+  if (!nickname) return;
+  let lb = getLeaderboard();
+  const idx = lb.findIndex(e => e.nickname === nickname);
+  if (idx >= 0) {
+    // 只更新最高分
+    if (totalPeaches > lb[idx].peaches) {
+      lb[idx].peaches = totalPeaches;
+    }
+  } else {
+    lb.push({ nickname, peaches: totalPeaches });
+  }
+  // 按桃子数量降序排序
+  lb.sort((a, b) => b.peaches - a.peaches);
+  // 最多保留100条
+  if (lb.length > 100) lb = lb.slice(0, 100);
+  saveLeaderboard(lb);
+}
+
+function showLeaderboard() {
+  document.getElementById('category-screen').style.display = 'none';
+  document.getElementById('leaderboard-screen').style.display = 'block';
+  document.getElementById('lb-nickname-display').textContent =
+    currentNickname ? '当前用户：' + currentNickname : '';
+  renderLeaderboard();
+  sfxClick();
+}
+
+function hideLeaderboard() {
+  document.getElementById('leaderboard-screen').style.display = 'none';
+  document.getElementById('category-screen').style.display = 'block';
+  sfxClick();
+}
+
+function renderLeaderboard() {
+  const lb = getLeaderboard();
+  const listEl = document.getElementById('lb-list');
+  listEl.innerHTML = '';
+
+  if (lb.length === 0) {
+    listEl.innerHTML =
+      '<div class="lb-empty">' +
+        '<div class="lb-empty-emoji">🍑</div>' +
+        '还没有排行榜数据哦<br>快去闯关摘桃子吧！' +
+      '</div>';
+    return;
+  }
+
+  const medals = ['🥇', '🥈', '🥉'];
+
+  lb.forEach((entry, i) => {
+    const item = document.createElement('div');
+    item.className = 'lb-item' + (entry.nickname === currentNickname ? ' lb-self' : '');
+
+    const rankClass = i < 3 ? ' lb-rank-' + (i+1) : '';
+    const medalHtml = i < 3
+      ? '<div class="lb-medal">' + medals[i] + '</div>'
+      : '';
+
+    item.innerHTML =
+      '<div class="lb-rank' + rankClass + '">' + (i+1) + '</div>' +
+      '<div class="lb-info">' +
+        '<div class="lb-nickname">' + escapeHtml(entry.nickname) + '</div>' +
+        '<div class="lb-peaches">🍑 ' + entry.peaches + ' 个桃子</div>' +
+      '</div>' +
+      medalHtml;
+
+    listEl.appendChild(item);
+  });
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+// 计算用户总桃子数
+function getTotalPeaches() {
+  const data = loadProgress();
+  return data.totalPeaches || 0;
+}
+
+// 在 endLevel 通关时更新排行榜
+const _origEndLevel = endLevel;
+endLevel = function(win) {
+  _origEndLevel(win);
+  if (currentNickname) {
+    // 计算总桃子数（所有分类所有关卡）
+    let total = 0;
+    for (let ci = 0; ci < CATEGORIES.length; ci++) {
+      total += getCatTotalPeaches(ci);
+    }
+    updateLeaderboard(currentNickname, total);
+  }
+};
+
+// 辅助：获取某分类总桃子数
+function getCatTotalPeaches(catIdx) {
+  const cat = CATEGORIES[catIdx];
+  if (!cat) return 0;
+  let sum = 0;
+  for (let lv = 0; lv < cat.levels.length; lv++) {
+    const key = progKey(catIdx, lv);
+    const rec = getLevelProgress(catIdx, lv);
+    if (rec && rec.passed) {
+      sum += (rec.peach || 0);
+    }
+  }
+  return sum;
+}
+
+// 辅助：计算某分类已通过关数
+function countPassedInCat(catIdx) {
+  const cat = CATEGORIES[catIdx];
+  if (!cat) return 0;
+  let cnt = 0;
+  for (let lv = 0; lv < cat.levels.length; lv++) {
+    if (isLevelPassed(catIdx, lv)) cnt++;
+  }
+  return cnt;
+}
+
+checkLogin();
 </script>
 </body>
 </html>
