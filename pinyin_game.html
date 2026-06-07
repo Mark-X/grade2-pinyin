@@ -1592,24 +1592,24 @@ body {
 /* ===== 排行榜页面 ===== */
 #leaderboard-screen {
   min-height: 100vh;
-  padding: 20px 16px 40px;
-  max-width: 900px;
+  padding: 16px 12px 40px;
+  max-width: 480px;
   margin: 0 auto;
   display: none;
 }
 .lb-header {
   text-align: center;
-  padding: 16px 0 12px;
+  padding: 12px 0 8px;
 }
 .lb-title {
-  font-size: 2em;
+  font-size: 1.8em;
   color: #fff;
   text-shadow: 2px 3px 8px rgba(255,107,129,0.5);
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 .lb-subtitle {
   color: rgba(255,255,255,0.85);
-  font-size: 0.95em;
+  font-size: 0.9em;
 }
 .lb-back-btn {
   display: inline-block;
@@ -1620,7 +1620,7 @@ body {
   padding: 6px 16px;
   font-size: 0.9em;
   cursor: pointer;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
   font-family: inherit;
   transition: background 0.2s;
 }
@@ -1628,56 +1628,61 @@ body {
 .lb-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-top: 16px;
+  gap: 6px;
+  margin-top: 12px;
 }
 .lb-item {
   background: rgba(255,255,255,0.92);
-  border-radius: 18px;
-  padding: 14px 18px;
+  border-radius: 14px;
+  padding: 10px 14px;
   display: flex;
   align-items: center;
-  gap: 14px;
-  box-shadow: 0 3px 14px rgba(0,0,0,0.06);
+  gap: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
   transition: transform 0.2s, box-shadow 0.2s;
   position: relative;
   overflow: hidden;
 }
 .lb-item:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
 }
 .lb-item.lb-self {
-  background: linear-gradient(135deg, rgba(255,180,162,0.18), rgba(229,152,155,0.12));
-  border: 2px solid rgba(255,180,162,0.5);
+  background: linear-gradient(135deg, rgba(255,180,162,0.22), rgba(229,152,155,0.15));
+  border: 2px solid rgba(255,180,162,0.55);
 }
 .lb-rank {
-  font-size: 1.6em;
+  font-size: 1.2em;
   font-weight: bold;
-  width: 44px;
+  width: 36px;
   text-align: center;
   flex-shrink: 0;
 }
 .lb-rank-1 { color: #f9c74f; }
 .lb-rank-2 { color: #b0b0b0; }
 .lb-rank-3 { color: #e09b5a; }
-.lb-info {
-  flex: 1;
-  text-align: left;
-}
 .lb-nickname {
-  font-size: 1.05em;
+  flex: 1;
+  font-size: 1em;
   font-weight: bold;
   color: #2d3436;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-.lb-peaches {
-  font-size: 0.85em;
+.lb-peach-count {
+  font-size: 1em;
   color: #e17055;
   font-weight: bold;
+  flex-shrink: 0;
+  min-width: 60px;
+  text-align: right;
 }
 .lb-medal {
-  font-size: 2em;
+  font-size: 1.4em;
   flex-shrink: 0;
+  width: 30px;
+  text-align: center;
 }
 .lb-empty {
   text-align: center;
@@ -1697,9 +1702,12 @@ body {
   color: #6d4c41;
   font-weight: bold;
   backdrop-filter: blur(4px);
-  margin-top: 10px;
+  margin-top: 8px;
   display: inline-block;
 }
+.lb-item.lb-top1 { background: linear-gradient(135deg, rgba(249,199,79,0.15), rgba(249,199,79,0.06)); }
+.lb-item.lb-top2 { background: linear-gradient(135deg, rgba(176,176,176,0.12), rgba(176,176,176,0.05)); }
+.lb-item.lb-top3 { background: linear-gradient(135deg, rgba(224,155,90,0.12), rgba(224,155,90,0.05)); }
 </style>
 </head>
 <body>
@@ -3509,35 +3517,80 @@ document.addEventListener('keydown', function(e) {
 });
 
 // ============================================================
-// 排行榜系统
+// 排行榜系统（30名 + 当前用户真实排名）
 // ============================================================
-function getLeaderboard() {
-  try {
-    return JSON.parse(localStorage.getItem('pinyinGame_leaderboard') || '[]');
-  } catch(e) { return []; }
-}
 
-function saveLeaderboard(lb) {
-  localStorage.setItem('pinyinGame_leaderboard', JSON.stringify(lb));
-}
+// 随机昵称池
+const FAKE_NICKS = [
+  '桃子小王子','摘桃达人','语文小能手','快乐桃桃','蜜桃少女',
+  '小书虫','古诗小达人','拼音高手','字词大王','聪明小脑瓜',
+  '学霸桃桃','桃子精灵','语文小学霸','开心桃子','蜜桃男孩',
+  '智慧桃桃','桃子队长','小小文学家','字词小达人','古诗小能手',
+  '桃仙子','蜜桃小可','淘气桃桃','语文小天才','桃子萌萌',
+  '蜜桃公主','桃子闪闪','快乐小学霸','智慧小桃','桃桃爱学习'
+];
 
-function updateLeaderboard(nickname, totalPeaches) {
-  if (!nickname) return;
-  let lb = getLeaderboard();
-  const idx = lb.findIndex(e => e.nickname === nickname);
-  if (idx >= 0) {
-    // 只更新最高分
-    if (totalPeaches > lb[idx].peaches) {
-      lb[idx].peaches = totalPeaches;
-    }
-  } else {
-    lb.push({ nickname, peaches: totalPeaches });
+// 基于昵称生成稳定的随机数种子，确保同一用户每次看到相同排行榜
+function simpleHash(str) {
+  let h = 0;
+  for (let i = 0; i < str.length; i++) {
+    h = ((h << 5) - h + str.charCodeAt(i)) | 0;
   }
-  // 按桃子数量降序排序
-  lb.sort((a, b) => b.peaches - a.peaches);
-  // 最多保留100条
-  if (lb.length > 100) lb = lb.slice(0, 100);
-  saveLeaderboard(lb);
+  return Math.abs(h);
+}
+
+function seededRandom(seed) {
+  let s = seed;
+  return function() {
+    s = (s * 16807 + 0) % 2147483647;
+    return (s - 1) / 2147483646;
+  };
+}
+
+function generateFakeLeaderboard() {
+  const seed = simpleHash(currentNickname || 'default');
+  const rng = seededRandom(seed);
+
+  // 30个随机昵称（排除当前用户昵称）
+  const availableNicks = FAKE_NICKS.filter(n => n !== currentNickname);
+  const shuffled = [...availableNicks].sort(() => rng() - 0.5);
+  const fakeEntries = [];
+
+  for (let i = 0; i < 30 && i < shuffled.length; i++) {
+    // 桃子数 10-300 之间，偏向中间值
+    const base = rng();
+    const peaches = Math.round(10 + base * 290);
+    fakeEntries.push({
+      nickname: shuffled[i],
+      peaches: peaches,
+      isFake: true
+    });
+  }
+
+  return fakeEntries;
+}
+
+function getFullLeaderboard() {
+  const fakeList = generateFakeLeaderboard();
+
+  // 当前用户真实桃子数
+  if (currentNickname) {
+    let total = 0;
+    for (let ci = 0; ci < CATEGORIES.length; ci++) {
+      total += getCatTotalPeaches(ci);
+    }
+    fakeList.push({
+      nickname: currentNickname,
+      peaches: total,
+      isFake: false
+    });
+  }
+
+  // 按桃子数降序排列
+  fakeList.sort((a, b) => b.peaches - a.peaches);
+
+  // 取前30名
+  return fakeList.slice(0, 30);
 }
 
 function showLeaderboard() {
@@ -3556,24 +3609,21 @@ function hideLeaderboard() {
 }
 
 function renderLeaderboard() {
-  const lb = getLeaderboard();
+  const lb = getFullLeaderboard();
   const listEl = document.getElementById('lb-list');
   listEl.innerHTML = '';
-
-  if (lb.length === 0) {
-    listEl.innerHTML =
-      '<div class="lb-empty">' +
-        '<div class="lb-empty-emoji">🍑</div>' +
-        '还没有排行榜数据哦<br>快去闯关摘桃子吧！' +
-      '</div>';
-    return;
-  }
 
   const medals = ['🥇', '🥈', '🥉'];
 
   lb.forEach((entry, i) => {
     const item = document.createElement('div');
-    item.className = 'lb-item' + (entry.nickname === currentNickname ? ' lb-self' : '');
+    const isSelf = !entry.isFake;
+    let cls = 'lb-item';
+    if (isSelf) cls += ' lb-self';
+    if (i === 0) cls += ' lb-top1';
+    else if (i === 1) cls += ' lb-top2';
+    else if (i === 2) cls += ' lb-top3';
+    item.className = cls;
 
     const rankClass = i < 3 ? ' lb-rank-' + (i+1) : '';
     const medalHtml = i < 3
@@ -3582,10 +3632,8 @@ function renderLeaderboard() {
 
     item.innerHTML =
       '<div class="lb-rank' + rankClass + '">' + (i+1) + '</div>' +
-      '<div class="lb-info">' +
-        '<div class="lb-nickname">' + escapeHtml(entry.nickname) + '</div>' +
-        '<div class="lb-peaches">🍑 ' + entry.peaches + ' 个桃子</div>' +
-      '</div>' +
+      '<div class="lb-nickname">' + escapeHtml(entry.nickname) + (isSelf ? '（我）' : '') + '</div>' +
+      '<div class="lb-peach-count">🍑 ' + entry.peaches + '</div>' +
       medalHtml;
 
     listEl.appendChild(item);
@@ -3600,23 +3648,12 @@ function escapeHtml(str) {
 
 // 计算用户总桃子数
 function getTotalPeaches() {
-  const data = loadProgress();
-  return data.totalPeaches || 0;
-}
-
-// 在 endLevel 通关时更新排行榜
-const _origEndLevel = endLevel;
-endLevel = function(win) {
-  _origEndLevel(win);
-  if (currentNickname) {
-    // 计算总桃子数（所有分类所有关卡）
-    let total = 0;
-    for (let ci = 0; ci < CATEGORIES.length; ci++) {
-      total += getCatTotalPeaches(ci);
-    }
-    updateLeaderboard(currentNickname, total);
+  let total = 0;
+  for (let ci = 0; ci < CATEGORIES.length; ci++) {
+    total += getCatTotalPeaches(ci);
   }
-};
+  return total;
+}
 
 // 辅助：获取某分类总桃子数
 function getCatTotalPeaches(catIdx) {
