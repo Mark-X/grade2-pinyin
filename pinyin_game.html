@@ -2333,6 +2333,9 @@ function goToCategories() {
 // ============================================================
 // 已通过的关卡：直接显示通关结果（不重新答题）
 function replayForPassedLevel(catIdx, lvIdx) {
+  // 必须更新全局变量，否则"再练一遍"会跳到错误的分类
+  currentCatIdx = catIdx;
+  currentLevel = lvIdx;
   const cat = CATEGORIES[catIdx];
   const lv = cat.levels[lvIdx];
   const saved = getLevelProgress(catIdx, lvIdx);
