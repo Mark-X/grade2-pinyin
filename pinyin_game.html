@@ -2324,8 +2324,9 @@ function nextQuestion() {
 }
 
 function updateLivesDisplay() {
-  const h = '🍑'.repeat(Math.max(0, lives)) + '🩶'.repeat(Math.max(0, 3 - lives));
-  document.getElementById('lives-display').textContent = h;
+  const peachGray = '<span style="filter:grayscale(1);opacity:0.4;font-size:inherit">🍑</span>';
+  const h = '🍑'.repeat(Math.max(0, lives)) + peachGray.repeat(Math.max(0, 3 - lives));
+  document.getElementById('lives-display').innerHTML = h;
 }
 
 function updateCombo() {
