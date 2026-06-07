@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>🍑 摘桃子 · 拼音大冒险 - 二年级上册</title>
+<title>🍑 摘桃子 · 语文大冒险 - 二年级上册</title>
 <script src="dict_data.js"></script>
+<script src="categories_data.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap');
 
@@ -16,13 +17,104 @@ body {
   background: linear-gradient(135deg, #ffe8d6 0%, #ffcdb2 30%, #ffb4a2 60%, #e5989b 100%);
 }
 
-/* ===== 首页 - 卡片选择 ===== */
+/* ===== 分类选择首页 ===== */
+#category-screen {
+  min-height: 100vh;
+  padding: 20px 16px 40px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.cat-header {
+  text-align: center;
+  padding: 16px 0 12px;
+}
+.cat-title {
+  font-size: 2.2em;
+  color: #fff;
+  text-shadow: 2px 3px 8px rgba(255,107,129,0.5);
+  margin-bottom: 4px;
+}
+.cat-subtitle {
+  color: rgba(255,255,255,0.85);
+  font-size: 0.95em;
+}
+.cat-stats {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 10px 0 18px;
+  flex-wrap: wrap;
+}
+.cat-stats span {
+  background: rgba(255,255,255,0.45);
+  border-radius: 20px;
+  padding: 5px 14px;
+  font-size: 0.82em;
+  color: #6d4c41;
+  font-weight: bold;
+  backdrop-filter: blur(4px);
+}
+.cat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+.cat-card {
+  background: rgba(255,255,255,0.9);
+  border-radius: 22px;
+  padding: 20px 12px 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  position: relative;
+  overflow: hidden;
+}
+.cat-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 5px;
+  border-radius: 22px 22px 0 0;
+}
+.cat-card:nth-child(9n+1)::before { background: linear-gradient(90deg, #ffb4a2, #e5989b); }
+.cat-card:nth-child(9n+2)::before { background: linear-gradient(90deg, #f9c74f, #f8961e); }
+.cat-card:nth-child(9n+3)::before { background: linear-gradient(90deg, #90be6d, #43aa8b); }
+.cat-card:nth-child(9n+4)::before { background: linear-gradient(90deg, #577590, #5e60ce); }
+.cat-card:nth-child(9n+5)::before { background: linear-gradient(90deg, #f3722c, #f94144); }
+.cat-card:nth-child(9n+6)::before { background: linear-gradient(90deg, #4cc9f0, #4361ee); }
+.cat-card:nth-child(9n+7)::before { background: linear-gradient(90deg, #f9844a, #f3722c); }
+.cat-card:nth-child(9n+8)::before { background: linear-gradient(90deg, #7209b7, #b5179e); }
+.cat-card:nth-child(9n+9)::before { background: linear-gradient(90deg, #06d6a0, #118ab2); }
+.cat-card:hover { transform: translateY(-4px); box-shadow: 0 8px 28px rgba(0,0,0,0.14); }
+.cat-card:active { transform: scale(0.97); }
+.cat-emoji { font-size: 2.6em; line-height: 1; margin-bottom: 6px; }
+.cat-name { font-size: 1.05em; color: #2d3436; font-weight: bold; margin-bottom: 4px; }
+.cat-desc { font-size: 0.78em; color: #888; margin-bottom: 6px; }
+.cat-progress { font-size: 0.72em; color: #6d4c41; }
+.cat-progress .cat-peach { color: #e17055; }
+
+/* ===== 分类关卡列表页 ===== */
 #home-screen {
   min-height: 100vh;
   padding: 20px 16px 40px;
   max-width: 900px;
   margin: 0 auto;
 }
+.home-back-btn {
+  display: inline-block;
+  background: rgba(255,255,255,0.6);
+  color: #6d4c41;
+  border: none;
+  border-radius: 20px;
+  padding: 6px 16px;
+  font-size: 0.9em;
+  cursor: pointer;
+  margin-bottom: 8px;
+  font-family: inherit;
+  transition: background 0.2s;
+}
+.home-back-btn:hover { background: rgba(255,255,255,0.85); }
 
 .home-header {
   text-align: center;
@@ -636,10 +728,16 @@ body {
 }
 
 @media (min-width: 1200px) {
+  .cat-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+  }
   .card-grid {
     grid-template-columns: repeat(5, 1fr);
     gap: 18px;
   }
+  .cat-title { font-size: 3em; }
+  .cat-emoji { font-size: 3.2em; }
   .home-title { font-size: 3em; }
   .card-emoji { font-size: 3.2em; }
   .game-container { max-width: 560px; }
@@ -1410,14 +1508,29 @@ body {
 <!-- 背景音乐开关 -->
 <button class="bgm-toggle bgm-off" id="bgm-toggle" onclick="toggleBgm()">🎵</button>
 
-<!-- ===== 首页 - 卡片选择 ===== -->
-<div id="home-screen">
+<!-- ===== 分类选择首页 ===== -->
+<div id="category-screen">
+  <div class="cat-header">
+    <div class="cat-title">🍑 摘桃子 · 语文大冒险</div>
+    <div class="cat-subtitle">二年级上册 · 选择类型闯关</div>
+    <div class="cat-stats">
+      <span>🍑 <span id="cat-total-peaches">0</span>个桃子</span>
+      <span>⭐ <span id="cat-total-passed">0</span>关</span>
+      <span>🎯 <span id="cat-total-acc">—</span></span>
+    </div>
+  </div>
+  <div class="cat-grid" id="cat-grid"></div>
+</div>
+
+<!-- ===== 关卡列表页（某分类下的关卡） ===== -->
+<div id="home-screen" style="display:none">
+  <button class="home-back-btn" onclick="goToCategories()">← 返回分类</button>
   <div class="home-header">
-    <div class="home-title">🍑 摘桃子 · 拼音大冒险</div>
-    <div class="home-subtitle">二年级上册 · 答题摘桃子</div>
+    <div class="home-title" id="home-title">🎵 拼音大冒险</div>
+    <div class="home-subtitle" id="home-subtitle">选择正确拼音</div>
     <div class="home-stats">
       <span>🍑 <span id="total-peaches">0</span>个桃子</span>
-      <span>⭐ <span id="total-passed">0</span>/15关</span>
+      <span>⭐ <span id="total-passed">0</span>/0关</span>
       <span>🎯 <span id="total-acc">—</span></span>
       <span>📚 <span id="total-chars">0</span>字</span>
     </div>
@@ -1847,26 +1960,7 @@ function toggleBgm() {
   document.getElementById('bgm-toggle').classList.toggle('bgm-off', !bgmEnabled);
 }
 
-// ============================================================
-// 关卡定义
-// ============================================================
-const LEVELS = [
-  { name:"秋天诗篇", emoji:"🍂", chars:["咏","贺","妆","丝","裁","剪","拂","堤","醉","趁","脱","袄","遮","掩","探","眉","吐","芽","符","解","触","杜","鹃","裹","颈","粒","漏","懊","丧","啊"] },
-  { name:"学校故事", emoji:"🏫", chars:["巧","绚","狐","狸","籽","礼","邓","坛","龄","格","致","勃","挖","额","汗","仍","肯","苗","移","挥","扶","亭","咨","询","剧","塔","餐","厅","厕","迹"] },
-  { name:"名人故事", emoji:"📖", chars:["曾","冒","蒙","瞧","宁","窝","顺","荆","棘","瓣","莹","觅","需","献","糕","尝","嘛","磨","粉","糖","料","甘","蔗","汁","熬","销","售","确","应","弱"] },
-  { name:"传统节日", emoji:"🏮", chars:["末","亚","簇","拥","随","芬","芳","紧","递","摸","显","州","遥","华","涌","隔","峡","与","陆","各","谊","浓","齐","奋","繁","传","统","贴","宵","巷"] },
-  { name:"美食文化", emoji:"🍜", chars:["潮","祭","扫","艾","堂","乞","郎","饼","赏","菊","甲","骨","漂","贵","饰","品","携","易","损","钱","币","财","赚","赔","购","拌","菠","煎","腐","茄"] },
-  { name:"厨房美食", emoji:"🍳", chars:["烤","葱","炖","蘑","菇","蒸","饺","炸","酱","粥","蛋","津","酸","溜","辣","乎","喷","腻","绵","脆","帮","梦","躺","聊","蹦","郁","般","精","境","叮"] },
-  { name:"动物世界", emoji:"🦊", chars:["咛","匹","郊","微","泛","纹","异","恋","舍","求","株","拾","骑","渡","荫","蔽","阿","姨","撑","便","冈","懂","案","倒","翁","橡","枪","控","坦","克"] },
-  { name:"寓言故事", emoji:"🐢", chars:["航","模","型","寓","则","亡","补","牢","圈","叼","修","堵","悔","实","焦","筋","喘","费","截","室","幅","哈","审","肃","晌","嬉","悦","棚","驮","坊"] },
-  { name:"自然风光", emoji:"🌄", chars:["挡","伯","浅","刚","淹","叹","唤","蹄","既","厨","柜","廊","商","厦","洞","穴","窟","窿","窖","窄","窑","鸣","含","岭","泊","晓","净","寺","宋","毕"] },
-  { name:"远古神话", emoji:"🐉", chars:["竟","压","蝉","蛛","蜘","响","哗","渐","慌","针","辨","忠","导","盏","永","闯","碰","稠","稀","渠","宇","宙","稳","须","固","杯","重","态","即","使"] },
-  { name:"四季变换", emoji:"🌸", chars:["饮","挤","浴","桶","简","博","邓","坛","谊","齐","芬","芳","糕","尝","磨","嬉","悦","帮","梦","精","境","宵","巷","潮","祭","堂","郎","赏","菊","甲"] },
-  { name:"成语故事", emoji:"📝", chars:["丧","冒","蒙","宁","窝","裹","颈","懊","仍","肯","触","杜","鹃","粒","漏","符","解","芽","吐","醉","趁","脱","袄","遮","掩","探","眉","咏","贺","妆"] },
-  { name:"生活百科", emoji:"🔬", chars:["倒","翁","橡","枪","控","坦","克","航","模","型","寓","则","亡","补","牢","圈","叼","修","堵","悔","实","焦","筋","喘","费","截","室","幅","哈","审"] },
-  { name:"综合复习", emoji:"📚", chars:["重","态","即","使","饮","挤","浴","桶","简","博","稠","稀","渠","宇","宙","稳","须","固","杯","蝉","蛛","蜘","响","哗","渐","慌","针","辨","忠","导"] },
-  { name:"终极挑战", emoji:"🏆", chars:["泊","晓","净","寺","宋","毕","竟","压","永","闯","碰","盏","导","忠","辨","针","慌","渐","哗","响","蜘","蛛","蝉","稳","须","固","重","即","使","传"] },
-];
+// LEVELS 已移至 categories_data.js 中 CATEGORIES[0].levels
 
 // ============================================================
 // 拼音数据
@@ -1987,7 +2081,9 @@ function shuffle(arr) {
 // ============================================================
 // 游戏状态
 // ============================================================
-let currentLevel = 0;
+let currentCatIdx = 0;   // 当前分类索引
+let currentLevel = 0;    // 当前关卡索引（在某分类内）
+let gameMode = 'pinyin'; // 'pinyin' | 'questions'
 let queue = [];
 let qIdx = 0;
 let correctCount = 0;
@@ -2062,19 +2158,23 @@ function showComboEffect(count) {
 }
 
 function loadProgress() {
-  try { return JSON.parse(localStorage.getItem('pinyinGame_v3') || '{}'); } catch(e) { return {}; }
+  try { return JSON.parse(localStorage.getItem('pinyinGame_v4') || '{}'); } catch(e) { return {}; }
 }
 function saveProgress(progress) {
-  localStorage.setItem('pinyinGame_v3', JSON.stringify(progress));
+  localStorage.setItem('pinyinGame_v4', JSON.stringify(progress));
 }
-function markPassed(level) {
+// 进度 key：catId-lvIdx
+function progKey(catIdx, lvIdx) {
+  return `${CATEGORIES[catIdx].id}-${lvIdx}`;
+}
+function markPassed(catIdx, lvIdx) {
   const p = loadProgress();
   if (!p.passed) p.passed = [];
-  const isNew = !p.passed.includes(level);
-  if (isNew) p.passed.push(level);
+  const key = progKey(catIdx, lvIdx);
+  const isNew = !p.passed.includes(key);
+  if (isNew) p.passed.push(key);
   if (!p.stats) p.stats = {};
-  p.stats[level] = { correct: correctCount, total: totalAnswered };
-  // 桃子计数：首次通关，赢得桃子数=答对数
+  p.stats[key] = { correct: correctCount, total: totalAnswered };
   if (!p.peaches) p.peaches = 0;
   if (isNew) {
     p.peaches += correctCount;
@@ -2083,46 +2183,94 @@ function markPassed(level) {
 }
 
 // 获取指定关卡的进度详情 {correct, total, accuracy, passed}
-function getLevelProgress(levelIndex) {
+function getLevelProgress(catIdx, lvIdx) {
   const p = loadProgress();
   const stats = p.stats || {};
-  const lvStat = stats[levelIndex];
+  const key = progKey(catIdx, lvIdx);
+  const lvStat = stats[key];
   const passedArr = p.passed || [];
   if (!lvStat) return null;
   return {
     correct: lvStat.correct || 0,
     total: lvStat.total || 0,
     accuracy: lvStat.total > 0 ? Math.round(lvStat.correct / lvStat.total * 100) : 0,
-    passed: passedArr.includes(levelIndex)
+    passed: passedArr.includes(key)
   };
 }
 
 // 判断某关卡是否已通过
-function isLevelPassed(levelIndex) {
+function isLevelPassed(catIdx, lvIdx) {
   const p = loadProgress();
-  return (p.passed || []).includes(levelIndex);
+  return (p.passed || []).includes(progKey(catIdx, lvIdx));
 }
 
 // ============================================================
-// 首页卡片渲染
+// 分类选择页
 // ============================================================
-function renderHome() {
+function renderCategories() {
+  const p = loadProgress();
+  const passed = p.passed || [];
+  const container = document.getElementById('cat-grid');
+  container.innerHTML = '';
+
+  CATEGORIES.forEach((cat, ci) => {
+    const totalLv = cat.levels.length;
+    let passedCount = 0, catPeaches = 0;
+    for (let li = 0; li < totalLv; li++) {
+      if (isLevelPassed(ci, li)) {
+        passedCount++;
+        const prog = getLevelProgress(ci, li);
+        if (prog) catPeaches += prog.correct;
+      }
+    }
+
+    const card = document.createElement('div');
+    card.className = 'cat-card';
+    card.innerHTML = `<div class="cat-emoji">${cat.emoji}</div>`
+      + `<div class="cat-name">${cat.name}</div>`
+      + `<div class="cat-desc">${cat.desc}</div>`
+      + `<div class="cat-progress">${passedCount}/${totalLv}关  🍑${catPeaches}</div>`;
+    card.onclick = () => { sfxClick(); renderCategoryLevels(ci); };
+    container.appendChild(card);
+  });
+
+  // 统计
+  document.getElementById('cat-total-peaches').textContent = p.peaches || 0;
+  document.getElementById('cat-total-passed').textContent = passed.length;
+  const allStats = p.stats || {};
+  let totalC = 0, totalT = 0;
+  Object.values(allStats).forEach(s => { totalC += s.correct || 0; totalT += s.total || 0; });
+  document.getElementById('cat-total-acc').textContent = totalT > 0 ? Math.round(totalC / totalT * 100) + '%' : '—';
+
+  document.getElementById('category-screen').style.display = 'block';
+  document.getElementById('home-screen').style.display = 'none';
+  document.getElementById('game-screen').style.display = 'none';
+}
+
+// ============================================================
+// 某分类下的关卡列表
+// ============================================================
+function renderCategoryLevels(catIdx) {
+  const cat = CATEGORIES[catIdx];
   const p = loadProgress();
   const passed = p.passed || [];
   const container = document.getElementById('card-grid');
   container.innerHTML = '';
 
-  LEVELS.forEach((lv, i) => {
-    const isPassed = passed.includes(i);
-    const isUnlocked = i === 0 || passed.includes(i - 1);
+  document.getElementById('home-title').textContent = cat.emoji + ' ' + cat.name;
+  document.getElementById('home-subtitle').textContent = cat.desc;
+
+  cat.levels.forEach((lv, i) => {
+    const key = progKey(catIdx, i);
+    const isPassed = passed.includes(key);
+    const isUnlocked = i === 0 || passed.includes(progKey(catIdx, i - 1));
     const isCurrent = isUnlocked && !isPassed;
 
     const card = document.createElement('div');
     card.className = 'level-card' + (isPassed ? ' passed' : '') + (!isUnlocked ? ' locked' : '') + (isCurrent ? ' current' : '');
 
-    // 星级显示 → 桃子显示
     const stats = p.stats || {};
-    const lvStat = stats[i];
+    const lvStat = stats[key];
     let starsHtml = '';
     if (isPassed && lvStat) {
       const acc = lvStat.total > 0 ? Math.round(lvStat.correct / lvStat.total * 100) : 0;
@@ -2133,70 +2281,102 @@ function renderHome() {
       starsHtml = '🤍🤍🤍';
     }
 
-    let inner = `<div class="card-emoji">${lv.emoji}</div>`;
-    inner += `<div class="card-level">第${i + 1}关</div>`;
-    inner += `<div class="card-name">${lv.name}</div>`;
-    inner += `<div class="card-stars">${starsHtml}</div>`;
-
-    if (isPassed) {
-      inner += `<span class="card-badge">✓</span>`;
-    }
-    if (!isUnlocked) {
-      inner += `<span class="card-lock">🔒</span>`;
-    }
-
+    let inner = '<div class="card-emoji">' + lv.emoji + '</div>';
+    inner += '<div class="card-level">第' + (i + 1) + '关</div>';
+    inner += '<div class="card-name">' + lv.name + '</div>';
+    inner += '<div class="card-stars">' + starsHtml + '</div>';
+    if (isPassed) inner += '<span class="card-badge">✓</span>';
+    if (!isUnlocked) inner += '<span class="card-lock">🔒</span>';
     card.innerHTML = inner;
 
     if (isUnlocked) {
-      card.onclick = () => { sfxClick(); onCardClick(i); };
+      card.onclick = (function(ci, li) {
+        return function() { sfxClick(); onCardClick(ci, li); };
+      })(catIdx, i);
     }
-
     container.appendChild(card);
   });
 
   // 统计
-  document.getElementById('total-passed').textContent = passed.length;
-  const uniqueChars = new Set(LEVELS.flatMap(l => l.chars));
-  document.getElementById('total-chars').textContent = uniqueChars.size;
-  const allStats = p.stats || {};
-  let totalC = 0, totalT = 0;
-  Object.values(allStats).forEach(s => { totalC += s.correct || 0; totalT += s.total || 0; });
-  document.getElementById('total-acc').textContent = totalT > 0 ? Math.round(totalC / totalT * 100) + '%' : '—';
-  // 桃子总数
-  const peaches = p.peaches || 0;
-  document.getElementById('total-peaches').textContent = peaches;
+  let catPassed = 0, catPeaches = 0;
+  for (let i = 0; i < cat.levels.length; i++) {
+    if (isLevelPassed(catIdx, i)) {
+      catPassed++;
+      const prog = getLevelProgress(catIdx, i);
+      if (prog) catPeaches += prog.correct;
+    }
+  }
+  document.getElementById('total-passed').textContent = catPassed + '/' + cat.levels.length;
+  document.getElementById('total-peaches').textContent = catPeaches;
+  var allStats2 = p.stats || {};
+  var totalC2 = 0, totalT2 = 0;
+  Object.values(allStats2).forEach(function(s) { totalC2 += s.correct || 0; totalT2 += s.total || 0; });
+  document.getElementById('total-acc').textContent = totalT2 > 0 ? Math.round(totalC2 / totalT2 * 100) + '%' : '—';
+  var totalItems = 0;
+  cat.levels.forEach(function(lv) { totalItems += (lv.chars ? lv.chars.length : (lv.questions ? lv.questions.length : 0)); });
+  document.getElementById('total-chars').textContent = totalItems;
+
+  document.getElementById('category-screen').style.display = 'none';
+  document.getElementById('home-screen').style.display = 'block';
+  document.getElementById('game-screen').style.display = 'none';
+}
+
+// ============================================================
+// 返回分类选择页
+// ============================================================
+function goToCategories() {
+  renderCategories();
 }
 
 // ============================================================
 // 开始关卡
 // ============================================================
 // 已通过的关卡：直接显示通关结果（不重新答题）
-function replayForPassedLevel(levelIndex) {
-  const level = LEVELS[levelIndex];
-  const saved = getLevelProgress(levelIndex);
+function replayForPassedLevel(catIdx, lvIdx) {
+  const cat = CATEGORIES[catIdx];
+  const lv = cat.levels[lvIdx];
+  const saved = getLevelProgress(catIdx, lvIdx);
   if (!saved) return;
 
-  // 显示通关弹窗和收获动画
   document.getElementById('win-overlay').classList.add('show');
+  const totalQ = lv.questions ? lv.questions.length : (lv.chars ? lv.chars.length : 0);
   document.getElementById('win-msg').textContent =
-    `\u{1F3AF} 本关共 ${level.chars.length} 题，正确率 ${saved.accuracy}%！`;
+    `\u{1F3AF} 本关共 ${totalQ} 题，正确率 ${saved.accuracy}%！`;
   playHarvestAnimation(saved.correct, saved.total - saved.correct);
 }
 
 // 卡片点击：已通过的关卡直接看结果，未通过的进入游戏
-function onCardClick(levelIndex) {
-  if (isLevelPassed(levelIndex)) {
-    replayForPassedLevel(levelIndex);
+function onCardClick(catIdx, lvIdx) {
+  if (isLevelPassed(catIdx, lvIdx)) {
+    replayForPassedLevel(catIdx, lvIdx);
   } else {
-    startLevel(levelIndex);
+    startLevel(catIdx, lvIdx);
   }
 }
 
-function startLevel(lvIdx) {
+function startLevel(catIdx, lvIdx) {
+  currentCatIdx = catIdx;
   currentLevel = lvIdx;
-  const lv = LEVELS[lvIdx];
-  const chars = lv.chars.filter(c => PY_MAP[c]);
-  queue = shuffle([...chars]);
+  const cat = CATEGORIES[catIdx];
+  const lv = cat.levels[lvIdx];
+
+  // 判断题型
+  if (lv.questions) {
+    // 嵌入式题目模式
+    gameMode = 'questions';
+    // 支持题目去重（不重复出现在 queue 中）
+    const allQ = shuffle([...lv.questions]);
+    // 如果题目数不足，复制并打乱
+    queue = allQ;
+    document.getElementById('game-title').textContent = `${cat.emoji} ${lv.emoji} ${lv.name}`;
+  } else {
+    // 拼音模式（向后兼容）
+    gameMode = 'pinyin';
+    const chars = lv.chars.filter(c => PY_MAP[c]);
+    queue = shuffle([...chars]);
+    document.getElementById('game-title').textContent = `${cat.emoji} ${lv.emoji} 第${lvIdx + 1}关 · ${lv.name}`;
+  }
+
   qIdx = 0;
   correctCount = 0;
   totalAnswered = 0;
@@ -2206,25 +2386,25 @@ function startLevel(lvIdx) {
   answered = false;
   sessionPeaches = 0;
 
+  // 隐藏首页（分类或关卡列表），显示游戏界面
+  document.getElementById('category-screen').style.display = 'none';
   document.getElementById('home-screen').style.display = 'none';
   document.getElementById('game-screen').style.display = 'block';
-  document.getElementById('game-title').textContent = `${lv.emoji} 第${lvIdx + 1}关 · ${lv.name}`;
 
   showQuestion();
 }
 
 function goHome() {
   document.getElementById('game-screen').style.display = 'none';
-  document.getElementById('home-screen').style.display = 'block';
   document.getElementById('win-overlay').classList.remove('show');
   document.getElementById('fail-overlay').classList.remove('show');
-  renderHome();
+  renderCategories();
 }
 
 function replayLevel() {
   document.getElementById('win-overlay').classList.remove('show');
   document.getElementById('fail-overlay').classList.remove('show');
-  startLevel(currentLevel);
+  startLevel(currentCatIdx, currentLevel);
 }
 
 // ============================================================
@@ -2233,53 +2413,92 @@ function replayLevel() {
 function showQuestion() {
   if (qIdx >= queue.length) { endLevel(true); return; }
   answered = false;
-  const char = queue[qIdx];
-  const correctPy = PY_MAP[char];
 
+  // 进度条
   const pct = Math.round(qIdx / queue.length * 100);
   document.getElementById('progress-fill').style.width = pct + '%';
   document.getElementById('score-display').textContent = `${qIdx}/${queue.length}`;
   updateLivesDisplay();
 
-  document.getElementById('q-char').textContent = char;
-  document.getElementById('q-hint').textContent = '选择正确的拼音';
+  if (gameMode === 'pinyin') {
+    // === 拼音模式 ===
+    const char = queue[qIdx];
+    const correctPy = PY_MAP[char];
 
-  const dictEntry = (typeof DICT !== 'undefined') ? DICT[char] : null;
-  let focusText = '';
-  if (dictEntry && dictEntry.e) {
-    if (dictEntry.e.includes('翘舌') && dictEntry.e.includes('鼻')) focusText = '🔥翘舌+鼻音';
-    else if (dictEntry.e.includes('翘舌')) focusText = '🔥翘舌音';
-    else if (dictEntry.e.includes('前鼻')) focusText = '👃前鼻音';
-    else if (dictEntry.e.includes('后鼻')) focusText = '👃后鼻音';
-    else if (dictEntry.e.includes('多音')) focusText = '🎵多音字';
+    document.getElementById('q-char').textContent = char;
+    document.getElementById('q-hint').textContent = '选择正确的拼音';
+    document.getElementById('q-char').style.fontSize = '';
+    document.getElementById('q-char').style.fontFamily = '';
+
+    // 考点标签
+    const dictEntry = (typeof DICT !== 'undefined') ? DICT[char] : null;
+    let focusText = '';
+    if (dictEntry && dictEntry.e) {
+      if (dictEntry.e.includes('翘舌') && dictEntry.e.includes('鼻')) focusText = '🔥翘舌+鼻音';
+      else if (dictEntry.e.includes('翘舌')) focusText = '🔥翘舌音';
+      else if (dictEntry.e.includes('前鼻')) focusText = '👃前鼻音';
+      else if (dictEntry.e.includes('后鼻')) focusText = '👃后鼻音';
+      else if (dictEntry.e.includes('多音')) focusText = '🎵多音字';
+    }
+    document.getElementById('focus-badge').textContent = focusText;
+
+    document.getElementById('know-card').style.display = 'none';
+    document.getElementById('next-btn').style.display = 'none';
+
+    const decoys = genSimilarOptions(correctPy, 3);
+    const options = shuffle([correctPy, ...decoys]);
+    const grid = document.getElementById('options-grid');
+    grid.innerHTML = '';
+    options.forEach(opt => {
+      const btn = document.createElement('button');
+      btn.className = 'option-btn';
+      btn.textContent = opt;
+      btn.onclick = () => handleAnswer(btn, opt, correctPy, char);
+      grid.appendChild(btn);
+    });
+
+  } else {
+    // === 嵌入式题目模式 ===
+    const q = queue[qIdx];
+
+    // 题目文字：支持多行（古诗填空等）
+    const qCharEl = document.getElementById('q-char');
+    qCharEl.textContent = q.q;
+    // 根据题目长度调整字体
+    if (q.q.length > 12) { qCharEl.style.fontSize = '1.6em'; qCharEl.style.fontFamily = "'SimSun','STSong','Songti SC',serif"; }
+    else if (q.q.length > 6) { qCharEl.style.fontSize = '2.2em'; qCharEl.style.fontFamily = "'SimSun','STSong','Songti SC',serif"; }
+    else { qCharEl.style.fontSize = ''; qCharEl.style.fontFamily = ''; }
+
+    document.getElementById('q-hint').textContent = '';
+    document.getElementById('focus-badge').textContent = '';
+
+    document.getElementById('know-card').style.display = 'none';
+    document.getElementById('next-btn').style.display = 'none';
+
+    const grid = document.getElementById('options-grid');
+    grid.innerHTML = '';
+    q.options.forEach((opt, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'option-btn';
+      btn.textContent = opt;
+      btn.onclick = () => handleAnswer(btn, opt, q.options[q.correct], q);
+      grid.appendChild(btn);
+    });
   }
-  document.getElementById('focus-badge').textContent = focusText;
-
-  document.getElementById('know-card').style.display = 'none';
-  document.getElementById('next-btn').style.display = 'none';
-
-  const decoys = genSimilarOptions(correctPy, 3);
-  const options = shuffle([correctPy, ...decoys]);
-  const grid = document.getElementById('options-grid');
-  grid.innerHTML = '';
-  options.forEach(opt => {
-    const btn = document.createElement('button');
-    btn.className = 'option-btn';
-    btn.textContent = opt;
-    btn.onclick = () => handleAnswer(btn, opt, correctPy, char);
-    grid.appendChild(btn);
-  });
 }
 
 // ============================================================
 // 处理答题
 // ============================================================
-function handleAnswer(btn, chosen, correct, char) {
+function handleAnswer(btn, chosen, correct, item) {
   if (answered) return;
   answered = true;
   totalAnswered++;
   const allBtns = document.querySelectorAll('.option-btn');
   allBtns.forEach(b => b.disabled = true);
+
+  // wrongSet 的键：拼音模式用字符，题目模式用题目文本
+  const itemKey = gameMode === 'pinyin' ? item : (item.q || JSON.stringify(item));
 
   if (chosen === correct) {
     btn.classList.add('correct');
@@ -2288,32 +2507,32 @@ function handleAnswer(btn, chosen, correct, char) {
     sessionPeaches++;
     sfxCorrect();
     if (combo >= 3) { sfxCombo(combo); sayCombo(combo); }
-    else if (Math.random() < 0.35) { sayCorrect(); }  // 答对时35%几率说话，不要太频繁
+    else if (Math.random() < 0.35) { sayCorrect(); }
     updateCombo();
     updatePeachDisplay();
     popPeach();
-    wrongSet.delete(char);
+    wrongSet.delete(itemKey);
   } else {
     btn.classList.add('wrong');
     allBtns.forEach(b => { if (b.textContent === correct) b.classList.add('correct'); });
     combo = 0;
     lives--;
     sfxWrong();
-    if (Math.random() < 0.4) sayWrong();  // 答错时40%几率鼓励，不要太频繁
+    if (Math.random() < 0.4) sayWrong();
     updateLivesDisplay();
-    if (!wrongSet.has(char)) {
-      wrongSet.add(char);
+    if (!wrongSet.has(itemKey)) {
+      wrongSet.add(itemKey);
       const insertAt = Math.min(qIdx + 3 + Math.floor(Math.random() * 3), queue.length);
-      queue.splice(insertAt, 0, char);
+      queue.splice(insertAt, 0, item);
     }
     if (lives <= 0) {
       setTimeout(() => endLevel(false), 1200);
-      showKnowCard(char);
+      showKnowCard(item);
       return;
     }
   }
 
-  showKnowCard(char);
+  showKnowCard(item);
   document.getElementById('next-btn').style.display = 'block';
 }
 
@@ -2339,28 +2558,40 @@ function updatePeachDisplay() {
 }
 
 // ============================================================
-// 知识卡片
+// 知识卡片 / 提示信息
 // ============================================================
-function showKnowCard(char) {
+function showKnowCard(item) {
   const card = document.getElementById('know-card');
-  if (typeof DICT === 'undefined' || !DICT[char]) { card.style.display = 'none'; return; }
-  const d = DICT[char];
-
-  document.getElementById('kc-char-title').textContent = char + '（' + (PY_MAP[char] || '') + '）';
-  document.getElementById('kc-radical').textContent = d.r ? `${d.r}（用"${d.r}"查字典）` : '—';
-  document.getElementById('kc-strokes').textContent = d.s ? `${d.s}画` : '—';
-  document.getElementById('kc-words').innerHTML = (d.w || []).map(w => `<span class="kc-tag">${w}</span>`).join('');
-  document.getElementById('kc-exam').textContent = d.e || '—';
-
-  const polyEl = document.getElementById('kc-poly-section');
-  if (d.p && d.p.length) {
-    polyEl.innerHTML = `<div style="margin-top:8px;font-weight:bold;color:#6d4c41;font-size:0.9em">🎵 多音字详解：</div>` +
-      d.p.map(pp => `<div class="kc-poly-block">
-        <span class="kc-poly-py">${pp.py}</span>
-        <span class="kc-poly-desc"> — ${pp.m}；例：${pp.x}</span>
-      </div>`).join('');
+  if (gameMode === 'pinyin') {
+    // 拼音模式：显示字典信息
+    const char = item;
+    if (typeof DICT === 'undefined' || !DICT[char]) { card.style.display = 'none'; return; }
+    const d = DICT[char];
+    document.getElementById('kc-char-title').textContent = char + '（' + (PY_MAP[char] || '') + '）';
+    document.getElementById('kc-radical').textContent = d.r ? `${d.r}（用"${d.r}"查字典）` : '—';
+    document.getElementById('kc-strokes').textContent = d.s ? `${d.s}画` : '—';
+    document.getElementById('kc-words').innerHTML = (d.w || []).map(w => `<span class="kc-tag">${w}</span>`).join('');
+    document.getElementById('kc-exam').textContent = d.e || '—';
+    const polyEl = document.getElementById('kc-poly-section');
+    if (d.p && d.p.length) {
+      polyEl.innerHTML = `<div style="margin-top:8px;font-weight:bold;color:#6d4c41;font-size:0.9em">🎵 多音字详解：</div>` +
+        d.p.map(pp => `<div class="kc-poly-block">
+          <span class="kc-poly-py">${pp.py}</span>
+          <span class="kc-poly-desc"> — ${pp.m}；例：${pp.x}</span>
+        </div>`).join('');
+    } else {
+      polyEl.innerHTML = '';
+    }
   } else {
-    polyEl.innerHTML = '';
+    // 题目模式：显示提示
+    const q = item;
+    if (!q || !q.hint) { card.style.display = 'none'; return; }
+    document.getElementById('kc-char-title').textContent = '💡 提示';
+    document.getElementById('kc-radical').textContent = '';
+    document.getElementById('kc-strokes').textContent = '';
+    document.getElementById('kc-words').innerHTML = '';
+    document.getElementById('kc-exam').textContent = q.hint;
+    document.getElementById('kc-poly-section').innerHTML = '';
   }
   card.style.display = 'block';
 }
@@ -2371,14 +2602,13 @@ function showKnowCard(char) {
 function endLevel(win) {
   const acc = totalAnswered > 0 ? Math.round(correctCount / totalAnswered * 100) : 0;
   const wrongCount = totalAnswered - correctCount;
+  const totalQ = gameMode === 'pinyin' ? queue.length : queue.length;
   if (win) {
-    markPassed(currentLevel);
+    markPassed(currentCatIdx, currentLevel);
     sfxWin();
-    // 显示通关弹窗
     document.getElementById('win-msg').textContent =
       `答对 ${correctCount} 题，正确率 ${acc}%！`;
     document.getElementById('win-overlay').classList.add('show');
-    // 播放收获动画
     playHarvestAnimation(correctCount, wrongCount);
   } else {
     sfxFail();
@@ -2831,7 +3061,7 @@ function sfxMonkeySteal() {
 }// ============================================================
 // 初始化
 // ============================================================
-renderHome();
+renderCategories();
 </script>
 </body>
 </html>
