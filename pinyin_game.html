@@ -3655,13 +3655,12 @@ function generateFakeLeaderboard() {
 function getFullLeaderboard() {
   const fakeList = generateFakeLeaderboard();
 
-  // 当前用户真实桃子数
+  // 当前用户真实桃子数（使用 p.peaches 总计数）
   let myPeaches = 0;
   let myRank = -1;
   if (currentNickname) {
-    for (let ci = 0; ci < CATEGORIES.length; ci++) {
-      myPeaches += getCatTotalPeaches(ci);
-    }
+    const p = loadProgress();
+    myPeaches = p.peaches || 0;
     fakeList.push({
       nickname: currentNickname,
       peaches: myPeaches,
