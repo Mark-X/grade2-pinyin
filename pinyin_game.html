@@ -1588,6 +1588,12 @@ body {
   color: #b2bec3;
   margin-top: 14px;
 }
+.login-error {
+  color: #e74c3c;
+  font-size: 0.82em;
+  min-height: 1.2em;
+  margin-top: 4px;
+}
 
 /* ===== 排行榜页面 ===== */
 #leaderboard-screen {
@@ -1773,6 +1779,9 @@ body {
     <div class="login-subtitle">输入你的昵称，开始冒险吧</div>
     <input class="login-input" id="login-nickname" type="text" maxlength="10"
            placeholder="输入昵称（最多10个字）" autocomplete="off" />
+    <input class="login-input" id="login-invite" type="text" maxlength="10"
+           placeholder="输入邀请码" autocomplete="off" style="margin-top:8px;" />
+    <div class="login-error" id="login-error"></div>
     <button class="login-btn" id="login-btn" onclick="doLogin()">🍑 开始摘桃子</button>
     <div class="login-hint">昵称将用于排行榜展示</div>
   </div>
@@ -3550,12 +3559,28 @@ function checkLogin() {
 
 function doLogin() {
   const input = document.getElementById('login-nickname');
+  const invite = document.getElementById('login-invite');
+  const errorDiv = document.getElementById('login-error');
   const nick = input.value.trim();
+
+  // 清除之前的错误状态
+  errorDiv.textContent = '';
+  input.style.borderColor = '';
+  invite.style.borderColor = '';
+
   if (!nick) {
     input.style.borderColor = '#e74c3c';
     input.setAttribute('placeholder', '请输入昵称哦～');
     return;
   }
+
+  const inviteVal = invite.value.trim();
+  if (inviteVal !== '6913') {
+    invite.style.borderColor = '#e74c3c';
+    errorDiv.textContent = '邀请码错误';
+    return;
+  }
+
   currentNickname = nick;
   localStorage.setItem('pinyinGame_nickname', nick);
   pvTrack('pv_login');
@@ -3764,8 +3789,6 @@ function countPassedInCat(catIdx) {
   return cnt;
 }
 
-checkLogin();
-
 // ============================================================
 // PV 打点系统（CounterAPI V1 - 免费无需认证）
 // ============================================================
@@ -3780,6 +3803,8 @@ function pvTrack(name) {
   const url = 'https://api.counterapi.dev/v1/' + PV_NS + '/' + encodeURIComponent(name) + '/up';
   fetch(url).catch(function() {}); // 静默失败，不影响用户体验
 }
+
+checkLogin();
 
 // 页面加载 PV
 pvTrack('pv_total');
