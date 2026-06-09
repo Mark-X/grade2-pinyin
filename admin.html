@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🍑 数据后台 - 摘桃子语文大冒险</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      background: linear-gradient(170deg, #fff0e6 0%, #ffe4d4 30%, #ffd4be 60%, #ffc8a8 100%);
+      min-height: 100vh;
+      padding: 20px 16px 40px;
+      color: #4e342e;
+    }
+    .container { max-width: 600px; margin: 0 auto; }
+    h1 {
+      text-align: center;
+      font-size: 1.6em;
+      color: #d35400;
+      margin-bottom: 4px;
+    }
+    .subtitle {
+      text-align: center;
+      color: #a04000;
+      font-size: 0.9em;
+      margin-bottom: 20px;
+    }
+    .refresh-btn {
+      display: block;
+      margin: 0 auto 20px;
+      background: rgba(211,84,0,0.12);
+      color: #a04000;
+      border: 1px solid rgba(211,84,0,0.25);
+      border-radius: 20px;
+      padding: 8px 24px;
+      font-size: 0.95em;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.2s;
+    }
+    .refresh-btn:hover { background: rgba(211,84,0,0.22); }
+    .refresh-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* 概览卡片 */
+    .overview {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      background: rgba(255,255,255,0.8);
+      border-radius: 16px;
+      padding: 16px;
+      text-align: center;
+      border: 1px solid rgba(211,84,0,0.08);
+      backdrop-filter: blur(4px);
+    }
+    .stat-card .stat-value {
+      font-size: 2em;
+      font-weight: bold;
+      color: #e65100;
+      line-height: 1.2;
+    }
+    .stat-card .stat-label {
+      font-size: 0.85em;
+      color: #8b5e3c;
+      margin-top: 4px;
+    }
+
+    /* 详细数据表 */
+    .section-title {
+      font-size: 1.15em;
+      font-weight: bold;
+      color: #bf360c;
+      margin: 20px 0 10px;
+      padding-bottom: 6px;
+      border-bottom: 2px solid rgba(211,84,0,0.15);
+    }
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: rgba(255,255,255,0.75);
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(211,84,0,0.08);
+    }
+    .data-table th {
+      background: rgba(211,84,0,0.1);
+      padding: 10px 12px;
+      text-align: left;
+      font-size: 0.9em;
+      color: #a04000;
+      font-weight: bold;
+    }
+    .data-table td {
+      padding: 8px 12px;
+      border-top: 1px solid rgba(211,84,0,0.06);
+      font-size: 0.9em;
+    }
+    .data-table tr:hover td {
+      background: rgba(211,84,0,0.04);
+    }
+    .data-table .num {
+      text-align: right;
+      font-weight: bold;
+      color: #e65100;
+    }
+    .data-table .cat-name {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .data-table .bar-cell {
+      width: 30%;
+    }
+    .bar-bg {
+      background: rgba(211,84,0,0.08);
+      border-radius: 4px;
+      height: 16px;
+      overflow: hidden;
+    }
+    .bar-fill {
+      background: linear-gradient(90deg, #ff7043, #e65100);
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.6s ease;
+      min-width: 2px;
+    }
+
+    /* 加载状态 */
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #8b5e3c;
+    }
+    .loading-spinner {
+      display: inline-block;
+      width: 32px;
+      height: 32px;
+      border: 3px solid rgba(211,84,0,0.15);
+      border-top-color: #e65100;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 8px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .update-time {
+      text-align: center;
+      color: #8b5e3c;
+      font-size: 0.8em;
+      margin-top: 16px;
+    }
+
+    .error-msg {
+      text-align: center;
+      color: #e74c3c;
+      padding: 20px;
+      font-size: 0.9em;
+    }
+
+    /* 秘密入口提示 */
+    .secret-hint {
+      text-align: center;
+      color: rgba(139,94,60,0.4);
+      font-size: 0.75em;
+      margin-top: 24px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🍑 数据后台</h1>
+    <div class="subtitle">摘桃子·语文大冒险 - 访问统计</div>
+
+    <button class="refresh-btn" id="refreshBtn" onclick="loadAllData()">🔄 刷新数据</button>
+
+    <!-- 概览 -->
+    <div class="overview" id="overview">
+      <div class="stat-card">
+        <div class="stat-value" id="totalPV">--</div>
+        <div class="stat-label">总访问量</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="totalLogin">--</div>
+        <div class="stat-label">登录次数</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="totalLevel">--</div>
+        <div class="stat-label">闯关次数</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="totalWin">--</div>
+        <div class="stat-label">通关次数</div>
+      </div>
+    </div>
+
+    <!-- 分类访问明细 -->
+    <div class="section-title">📊 各分类闯关数据</div>
+    <table class="data-table" id="catTable">
+      <thead>
+        <tr>
+          <th>分类</th>
+          <th>闯关次数</th>
+          <th>通关次数</th>
+          <th>通关率</th>
+        </tr>
+      </thead>
+      <tbody id="catTbody">
+        <tr><td colspan="4" class="loading"><div class="loading-spinner"></div><br>加载中...</td></tr>
+      </tbody>
+    </table>
+
+    <!-- 页面访问明细 -->
+    <div class="section-title">📄 页面访问明细</div>
+    <table class="data-table" id="pageTable">
+      <thead>
+        <tr>
+          <th>页面/事件</th>
+          <th>次数</th>
+          <th class="bar-cell">占比</th>
+        </tr>
+      </thead>
+      <tbody id="pageTbody">
+        <tr><td colspan="3" class="loading"><div class="loading-spinner"></div><br>加载中...</td></tr>
+      </tbody>
+    </table>
+
+    <div class="update-time" id="updateTime"></div>
+    <div class="secret-hint">此页面仅限管理员查看</div>
+  </div>
+
+<script>
+// ============================================================
+// PV 数据后台 - 读取 CounterAPI V1 数据
+// ============================================================
+const PV_NS = 'peach-game-2026';
+const API_BASE = 'https://api.counterapi.dev/v1/' + PV_NS + '/';
+
+// 所有打点名称及其中文标签
+const PV_METRICS = {
+  'pv_total':       '页面总访问',
+  'pv_login':       '登录',
+  'pv_category':    '分类首页',
+  'pv_leaderboard': '排行榜',
+  'pv_level_pinyin':  '拼音闯关',
+  'pv_level_polyphone': '多音字闯关',
+  'pv_level_similar':   '形近字闯关',
+  'pv_level_synonym':   '近义词闯关',
+  'pv_level_antonym':   '反义词闯关',
+  'pv_level_poem':      '古诗闯关',
+  'pv_level_idiom':     '成语闯关',
+  'pv_level_redup':     '重叠词闯关',
+  'pv_level_recite':    '背诵闯关',
+  'pv_win_pinyin':      '拼音通关',
+  'pv_win_polyphone':   '多音字通关',
+  'pv_win_similar':     '形近字通关',
+  'pv_win_synonym':     '近义词通关',
+  'pv_win_antonym':     '反义词通关',
+  'pv_win_poem':        '古诗通关',
+  'pv_win_idiom':       '成语通关',
+  'pv_win_redup':       '重叠词通关',
+  'pv_win_recite':      '背诵通关',
+};
+
+// 分类信息
+const CAT_INFO = [
+  { id: 'pinyin',    name: '拼音大冒险', emoji: '🔤' },
+  { id: 'polyphone', name: '多音字挑战', emoji: '🔤' },
+  { id: 'similar',   name: '形近字辨认', emoji: '👀' },
+  { id: 'synonym',   name: '近义词配对', emoji: '🔗' },
+  { id: 'antonym',   name: '反义词挑战', emoji: '⚡' },
+  { id: 'poem',      name: '古诗填空',   emoji: '📜' },
+  { id: 'idiom',     name: '成语天地',   emoji: '🏯' },
+  { id: 'redup',     name: '重叠词乐园', emoji: '🔄' },
+  { id: 'recite',    name: '课文背诵',   emoji: '📖' },
+];
+
+// 缓存数据
+let pvData = {};
+
+async function fetchCounter(name) {
+  try {
+    const res = await fetch(API_BASE + encodeURIComponent(name) + '/');
+    if (!res.ok) return 0;
+    const data = await res.json();
+    return data.count || 0;
+  } catch (e) {
+    return -1; // 错误标记
+  }
+}
+
+async function loadAllData() {
+  const btn = document.getElementById('refreshBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ 加载中...';
+
+  // 并发请求所有计数器
+  const names = Object.keys(PV_METRICS);
+  const promises = names.map(async (name) => {
+    const count = await fetchCounter(name);
+    pvData[name] = count;
+  });
+
+  await Promise.all(promises);
+
+  renderData();
+
+  btn.disabled = false;
+  btn.textContent = '🔄 刷新数据';
+  document.getElementById('updateTime').textContent =
+    '最后更新：' + new Date().toLocaleString('zh-CN');
+}
+
+function renderData() {
+  // 概览
+  const totalPV = Math.max(0, pvData['pv_total'] || 0);
+  const totalLogin = Math.max(0, pvData['pv_login'] || 0);
+  let totalLevel = 0;
+  let totalWin = 0;
+  CAT_INFO.forEach(c => {
+    totalLevel += Math.max(0, pvData['pv_level_' + c.id] || 0);
+    totalWin += Math.max(0, pvData['pv_win_' + c.id] || 0);
+  });
+
+  document.getElementById('totalPV').textContent = totalPV;
+  document.getElementById('totalLogin').textContent = totalLogin;
+  document.getElementById('totalLevel').textContent = totalLevel;
+  document.getElementById('totalWin').textContent = totalWin;
+
+  // 分类闯关表
+  const catTbody = document.getElementById('catTbody');
+  catTbody.innerHTML = '';
+  const maxLevel = Math.max(1, ...CAT_INFO.map(c => pvData['pv_level_' + c.id] || 0));
+
+  CAT_INFO.forEach(c => {
+    const lv = Math.max(0, pvData['pv_level_' + c.id] || 0);
+    const wn = Math.max(0, pvData['pv_win_' + c.id] || 0);
+    const rate = lv > 0 ? Math.round(wn / lv * 100) : 0;
+    const barW = Math.round(lv / maxLevel * 100);
+
+    const tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td><span class="cat-name">' + c.emoji + ' ' + c.name + '</span></td>' +
+      '<td class="num">' + lv + '</td>' +
+      '<td class="num">' + wn + '</td>' +
+      '<td class="num">' + rate + '%</td>';
+    catTbody.appendChild(tr);
+  });
+
+  // 页面访问明细表
+  const pageTbody = document.getElementById('pageTbody');
+  pageTbody.innerHTML = '';
+
+  // 按访问量排序
+  const entries = Object.keys(PV_METRICS)
+    .map(name => ({ name, label: PV_METRICS[name], count: Math.max(0, pvData[name] || 0) }))
+    .filter(e => e.count > 0 || e.name.startsWith('pv_'))
+    .sort((a, b) => b.count - a.count);
+
+  const maxCount = Math.max(1, ...entries.map(e => e.count));
+
+  entries.forEach(e => {
+    const barW = Math.round(e.count / maxCount * 100);
+    const tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td>' + e.label + '</td>' +
+      '<td class="num">' + (e.count >= 0 ? e.count : 'N/A') + '</td>' +
+      '<td class="bar-cell"><div class="bar-bg"><div class="bar-fill" style="width:' + barW + '%"></div></div></td>';
+    pageTbody.appendChild(tr);
+  });
+
+  if (entries.length === 0) {
+    pageTbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:#8b5e3c;padding:20px;">暂无数据，请稍后再试</td></tr>';
+  }
+}
+
+// 页面加载时自动拉取数据
+loadAllData();
+</script>
+</body>
+</html>

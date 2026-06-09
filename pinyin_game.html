@@ -2657,6 +2657,7 @@ function isLevelPassed(catIdx, lvIdx) {
 // 分类选择页
 // ============================================================
 function renderCategories() {
+  pvTrack('pv_category');
   // 更新首页昵称显示
   const display = document.getElementById('cat-nickname-display');
   if (display) {
@@ -2823,6 +2824,7 @@ function onCardClick(catIdx, lvIdx) {
 function startLevel(catIdx, lvIdx) {
   currentCatIdx = catIdx;
   currentLevel = lvIdx;
+  pvTrack('pv_level_' + CATEGORIES[catIdx].id);
   const cat = CATEGORIES[catIdx];
   const lv = cat.levels[lvIdx];
 
@@ -3074,6 +3076,7 @@ function endLevel(win) {
   const totalQ = gameMode === 'pinyin' ? queue.length : queue.length;
   if (win) {
     markPassed(currentCatIdx, currentLevel);
+    pvTrack('pv_win_' + CATEGORIES[currentCatIdx].id);
     sfxWin();
     document.getElementById('win-msg').textContent =
       `答对 ${correctCount} 题，正确率 ${acc}%！`;
@@ -3555,6 +3558,7 @@ function doLogin() {
   }
   currentNickname = nick;
   localStorage.setItem('pinyinGame_nickname', nick);
+  pvTrack('pv_login');
   // 切换界面
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('category-screen').style.display = 'block';
@@ -3655,6 +3659,7 @@ function getFullLeaderboard() {
 }
 
 function showLeaderboard() {
+  pvTrack('pv_leaderboard');
   document.getElementById('category-screen').style.display = 'none';
   document.getElementById('leaderboard-screen').style.display = 'block';
   renderLeaderboard();
@@ -3760,6 +3765,24 @@ function countPassedInCat(catIdx) {
 }
 
 checkLogin();
+
+// ============================================================
+// PV 打点系统（CounterAPI V1 - 免费无需认证）
+// ============================================================
+const PV_NS = 'peach-game-2026'; // namespace
+
+function pvTrack(name) {
+  // 防抖：同一事件5秒内不重复打点
+  if (!pvTrack._last) pvTrack._last = {};
+  if (pvTrack._last[name] && Date.now() - pvTrack._last[name] < 5000) return;
+  pvTrack._last[name] = Date.now();
+
+  const url = 'https://api.counterapi.dev/v1/' + PV_NS + '/' + encodeURIComponent(name) + '/up';
+  fetch(url).catch(function() {}); // 静默失败，不影响用户体验
+}
+
+// 页面加载 PV
+pvTrack('pv_total');
 </script>
 </body>
 </html>
