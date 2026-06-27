@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>🍑 摘桃子 · 语文大冒险</title>
+<title>🍑 摘桃子 · 语文大冒险 v2</title>
 <script src="dict_data.js"></script>
 <script src="categories_data.js"></script>
 <style>
@@ -3230,6 +3230,9 @@ function replayForPassedLevel(catIdx, lvIdx) {
   const totalQ = lv.questions ? lv.questions.length : (lv.chars ? lv.chars.length : 0);
   document.getElementById('win-msg').textContent =
     `\u{1F3AF} 本关共 ${totalQ} 题，正确率 ${saved.accuracy}%！`;
+  // 生字复习区
+  if (lv.chars) { gameMode = 'pinyin'; }
+  renderWinReview();
   playHarvestAnimation(saved.correct, saved.total - saved.correct);
 }
 
