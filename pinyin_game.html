@@ -2460,8 +2460,8 @@ function switchGrade(gradeId) {
   // 更新 tab 样式
   document.querySelectorAll('.grade-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('grade-tab-' + (gradeId === 'grade2b' ? '2b' : '3a')).classList.add('active');
-  // 更新 CATEGORIES 引用
-  window.CATEGORIES = GRADES[gradeId].categories;
+  // 更新 CATEGORIES 引用（直接修改 let 变量）
+  CATEGORIES = GRADES[gradeId].categories;
   // 更新副标题
   document.getElementById('cat-subtitle').textContent = GRADES[gradeId].name + ' · 选择类型闯关';
   // 重新渲染
@@ -2736,7 +2736,7 @@ function isLevelPassed(catIdx, lvIdx) {
 function renderCategories() {
   pvTrack('pv_category');
   // 确保 CATEGORIES 指向当前年级
-  window.CATEGORIES = GRADES[currentGrade].categories;
+  CATEGORIES = GRADES[currentGrade].categories;
   // 更新副标题
   document.getElementById('cat-subtitle').textContent = GRADES[currentGrade].name + ' · 选择类型闯关';
   // 更新年级 tab
@@ -3624,7 +3624,7 @@ function checkLogin() {
   const saved = localStorage.getItem('pinyinGame_nickname');
   if (saved) {
     currentNickname = saved;
-    window.CATEGORIES = GRADES[currentGrade].categories;
+    CATEGORIES = GRADES[currentGrade].categories;
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('category-screen').style.display = 'block';
     renderCategories();

@@ -349,8 +349,8 @@ const GRADE2B_CATEGORIES = [
   },
 ];
 
-// ========== 向后兼容：CATEGORIES 别名 ==========
-const CATEGORIES = GRADE2B_CATEGORIES;
+// ========== 向后兼容：CATEGORIES 别名（let 以支持年级切换） ==========
+let CATEGORIES = GRADE2B_CATEGORIES;
 
 // ========== 三年级上册数据 ==========
 const GRADE3A_CATEGORIES = [
