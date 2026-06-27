@@ -1984,6 +1984,7 @@ body {
     <h2 id="win-title">太棒了！摘到桃子啦！</h2>
     <p id="win-msg"></p>
     <div class="harvest-summary" id="harvest-summary"></div>
+    <div id="win-review" style="max-height:200px;overflow-y:auto;margin:12px 0;padding:0 8px;"></div>
     <button class="result-btn secondary" onclick="replayLevel()">🔄 再练一遍</button>
     <button class="result-btn" onclick="goHome()">🏠 回家数桃子</button>
   </div>
@@ -3511,6 +3512,8 @@ function endLevel(win) {
     sfxWin();
     document.getElementById('win-msg').textContent =
       `答对 ${correctCount} 题，正确率 ${acc}%！`;
+    // 生字复习区
+    renderWinReview();
     document.getElementById('win-overlay').classList.add('show');
     playHarvestAnimation(correctCount, wrongCount);
   } else {
@@ -3519,6 +3522,23 @@ function endLevel(win) {
       `生命值耗尽！答对 ${correctCount}/${totalAnswered} 题，正确率 ${acc}%，再练练吧！`;
     document.getElementById('fail-overlay').classList.add('show');
   }
+}
+
+// 通关后生字复习
+function renderWinReview() {
+  const el = document.getElementById('win-review');
+  if (gameMode !== 'pinyin') { el.innerHTML = ''; return; }
+  const cat = CATEGORIES[currentCatIdx];
+  const lv = cat.levels[currentLevel];
+  const chars = lv.chars || [];
+  const uniqueChars = [...new Set(chars)].filter(c => typeof DICT !== 'undefined' && DICT[c]);
+  if (uniqueChars.length === 0) { el.innerHTML = ''; return; }
+  const items = uniqueChars.slice(0, 12).map(c => {
+    const d = DICT[c];
+    const words = (d.w || []).slice(0, 2).join('、');
+    return `<span style="display:inline-block;background:rgba(255,255,255,0.7);border-radius:12px;padding:4px 10px;margin:3px;font-size:0.82em;color:#4e342e;cursor:pointer" onclick="speakWord('${d.w?d.w[0]:c}')" title="点击听发音">🔊 <b>${c}</b> ${words}</span>`;
+  });
+  el.innerHTML = `<div style="font-weight:bold;color:#6d4c41;margin-bottom:4px;font-size:0.9em">📖 本关生字复习（点击听发音）：</div>${items.join('')}`;
 }
 
 // 收获动画：小女孩爬梯子摘桃子 → 放到篮子里 + 猴子偷走答错的桃子
