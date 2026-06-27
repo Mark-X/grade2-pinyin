@@ -1819,6 +1819,7 @@ body {
     <div class="cat-title">🍑 摘桃子 · 语文大冒险</div>
     <div class="cat-subtitle" id="cat-subtitle">二年级下册 · 选择类型闯关</div>
     <div class="grade-tabs" style="display:flex;justify-content:center;gap:10px;margin:8px 0;">
+      <button class="grade-tab" id="grade-tab-2a" onclick="switchGrade('grade2a')">📘 二年级上册</button>
       <button class="grade-tab active" id="grade-tab-2b" onclick="switchGrade('grade2b')">📗 二年级下册</button>
       <button class="grade-tab" id="grade-tab-3a" onclick="switchGrade('grade3a')">📙 三年级上册</button>
     </div>
@@ -1842,6 +1843,7 @@ body {
     <div class="lb-title">🏆 桃子排行榜</div>
     <div class="lb-subtitle" id="lb-subtitle">看看谁是摘桃小能手！</div>
     <div class="grade-tabs" style="display:flex;justify-content:center;gap:10px;margin:8px 0;">
+      <button class="grade-tab" id="lb-grade-tab-2a" onclick="switchLeaderboardGrade('grade2a')">📘 二年级上册</button>
       <button class="grade-tab active" id="lb-grade-tab-2b" onclick="switchLeaderboardGrade('grade2b')">📗 二年级下册</button>
       <button class="grade-tab" id="lb-grade-tab-3a" onclick="switchLeaderboardGrade('grade3a')">📙 三年级上册</button>
     </div>
@@ -2459,7 +2461,7 @@ function switchGrade(gradeId) {
   currentGrade = gradeId;
   // 更新 tab 样式
   document.querySelectorAll('.grade-tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('grade-tab-' + (gradeId === 'grade2b' ? '2b' : '3a')).classList.add('active');
+  document.getElementById('grade-tab-' + gradeId.replace('grade','')).classList.add('active');
   // 更新 CATEGORIES 引用（直接修改 let 变量）
   CATEGORIES = GRADES[gradeId].categories;
   // 更新副标题
@@ -2741,7 +2743,7 @@ function renderCategories() {
   document.getElementById('cat-subtitle').textContent = GRADES[currentGrade].name + ' · 选择类型闯关';
   // 更新年级 tab
   document.querySelectorAll('.grade-tab').forEach(t => t.classList.remove('active'));
-  const tabId = 'grade-tab-' + (currentGrade === 'grade2b' ? '2b' : '3a');
+  const tabId = 'grade-tab-' + currentGrade.replace('grade','');
   document.getElementById(tabId).classList.add('active');
   // 更新首页昵称显示
   const display = document.getElementById('cat-nickname-display');
@@ -3767,7 +3769,7 @@ let leaderboardGrade = 'grade2b'; // 排行榜页面的年级筛选
 function switchLeaderboardGrade(gradeId) {
   leaderboardGrade = gradeId;
   document.querySelectorAll('#leaderboard-screen .grade-tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('lb-grade-tab-' + (gradeId === 'grade2b' ? '2b' : '3a')).classList.add('active');
+  document.getElementById('lb-grade-tab-' + gradeId.replace('grade','')).classList.add('active');
   renderLeaderboard();
   sfxClick();
 }
@@ -3779,7 +3781,7 @@ function showLeaderboard() {
   document.getElementById('leaderboard-screen').style.display = 'block';
   // 同步排行榜 tab
   document.querySelectorAll('#leaderboard-screen .grade-tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('lb-grade-tab-' + (leaderboardGrade === 'grade2b' ? '2b' : '3a')).classList.add('active');
+  document.getElementById('lb-grade-tab-' + leaderboardGrade.replace('grade','')).classList.add('active');
   document.getElementById('lb-subtitle').textContent = GRADES[leaderboardGrade].name + ' · 排行榜';
   renderLeaderboard();
   sfxClick();
