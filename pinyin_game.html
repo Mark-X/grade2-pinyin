@@ -1819,9 +1819,10 @@ body {
     <div class="cat-title">🍑 摘桃子 · 语文大冒险</div>
     <div class="cat-subtitle" id="cat-subtitle">二年级下册 · 选择类型闯关</div>
     <div class="grade-tabs" style="display:flex;justify-content:center;gap:10px;margin:8px 0;">
-      <button class="grade-tab" id="grade-tab-2a" onclick="switchGrade('grade2a')">📘 二年级上册</button>
-      <button class="grade-tab active" id="grade-tab-2b" onclick="switchGrade('grade2b')">📗 二年级下册</button>
-      <button class="grade-tab" id="grade-tab-3a" onclick="switchGrade('grade3a')">📙 三年级上册</button>
+      <button class="grade-tab" id="grade-tab-2a" onclick="switchGrade('grade2a')">📘 二上</button>
+      <button class="grade-tab active" id="grade-tab-2b" onclick="switchGrade('grade2b')">📗 二下</button>
+      <button class="grade-tab" id="grade-tab-3a" onclick="switchGrade('grade3a')">📙 三上</button>
+      <button class="grade-tab" id="grade-tab-3b" onclick="switchGrade('grade3b')">📕 三下</button>
     </div>
     <div class="cat-stats">
       <span>🍑 <span id="cat-total-peaches">0</span>个桃子</span>
@@ -1843,9 +1844,10 @@ body {
     <div class="lb-title">🏆 桃子排行榜</div>
     <div class="lb-subtitle" id="lb-subtitle">看看谁是摘桃小能手！</div>
     <div class="grade-tabs" style="display:flex;justify-content:center;gap:10px;margin:8px 0;">
-      <button class="grade-tab" id="lb-grade-tab-2a" onclick="switchLeaderboardGrade('grade2a')">📘 二年级上册</button>
-      <button class="grade-tab active" id="lb-grade-tab-2b" onclick="switchLeaderboardGrade('grade2b')">📗 二年级下册</button>
-      <button class="grade-tab" id="lb-grade-tab-3a" onclick="switchLeaderboardGrade('grade3a')">📙 三年级上册</button>
+      <button class="grade-tab" id="lb-grade-tab-2a" onclick="switchLeaderboardGrade('grade2a')">📘 二上</button>
+      <button class="grade-tab active" id="lb-grade-tab-2b" onclick="switchLeaderboardGrade('grade2b')">📗 二下</button>
+      <button class="grade-tab" id="lb-grade-tab-3a" onclick="switchLeaderboardGrade('grade3a')">📙 三上</button>
+      <button class="grade-tab" id="lb-grade-tab-3b" onclick="switchLeaderboardGrade('grade3b')">📕 三下</button>
     </div>
   </div>
   <div class="lb-list" id="lb-list"></div>
@@ -2551,7 +2553,18 @@ const PY_MAP = {
   "盒":"hé","眨":"zhǎ","睡":"shuì","研":"yán","破":"pò","碎":"suì","票":"piào","离":"lí","积":"jī","类":"lèi","糟":"zāo","约":"yuē","纱":"shā","组":"zǔ","终":"zhōng","绕":"rào","绝":"jué","继":"jì","续":"xù","翅":"chì",
   "耷":"dā","肖":"xiào","胳":"gē","脑":"nǎo","膀":"bǎng","膊":"bó","艺":"yì","茂":"mào","荡":"dàng","荣":"róng","虹":"hóng","蜜":"mì","讨":"tǎo","讶":"yà","该":"gāi","谈":"tán","谜":"mí","负":"fù","责":"zé","质":"zhì",
   "越":"yuè","趴":"pā","距":"jù","躲":"duǒ","转":"zhuǎn","辉":"huī","迈":"mài","近":"jìn","迷":"mí","追":"zhuī","逃":"táo","遇":"yù","野":"yě","钉":"dīng","钻":"zuān","铁":"tiě","铃":"líng","锋":"fēng","附":"fù","陈":"chén",
-  "隐":"yǐn","雄":"xióng","雷":"léi","骄":"jiāo","骗":"piàn","鲜":"xiān","鸭":"yā","鹅":"é"
+  "隐":"yǐn","雄":"xióng","雷":"léi","骄":"jiāo","骗":"piàn","鲜":"xiān","鸭":"yā","鹅":"é",
+  // === 三年级下册 ===
+  "燕":"yàn","聚":"jù","增":"zēng","掠":"lüè","稻":"dào","尖":"jiān","偶":"ǒu","沾":"zhān","漾":"yàng","倦":"juàn",
+  "赞":"zàn","俊":"jùn","俏":"qiào","谱":"pǔ","泳":"yǒng","紫":"zǐ","绦":"tāo","泗":"sì","滨":"bīn","寓":"yù",
+  "劝":"quàn","盘":"pán","缠":"chán","硬":"yìng","辕":"yuán","辙":"zhé","把":"bǎ","式":"shì","锄":"chú","释":"shì",
+  "其":"qí","中":"zhōng","窜":"cuàn","郁":"yù","湛":"zhàn","犁":"lí","扩":"kuò","栋":"dòng","森":"sēn","黎":"lí",
+  "潺":"chán","盈":"yíng","婪":"lán","窃":"qiè","肌":"jī","肤":"fū","维":"wéi","属":"shǔ","货":"huò","港":"gǎng",
+  "胞":"bāo","殊":"shū","轨":"guǐ","吨":"dūn","联":"lián","阅":"yuè","调":"diào","碌":"lù","弦":"xián","悲":"bēi",
+  "惨":"cǎn","愈":"yù","蓬":"péng","限":"xiàn","腾":"téng","历":"lì","奥":"ào","圣":"shèng","炬":"jù","缤":"bīn",
+  "锦":"jǐn","绚":"xuàn","描":"miáo","绘":"huì","享":"xiǎng","氛":"fēn","谐":"xié","搞":"gǎo","迅":"xùn","速":"sù",
+  "复":"fù","恰":"qià","犯":"fàn","缓":"huǎn","达":"dá","稚":"zhì","拙":"zhuō","运":"yùn","诊":"zhěn","暑":"shǔ",
+  "启":"qǐ","待":"dài","演":"yǎn","跨":"kuà","顾":"gù"
 };
 
 // ============================================================
