@@ -2200,6 +2200,17 @@ function playTone(freq, duration, type, vol) {
   } catch(e) {}
 }
 
+// 语音播报（Web Speech API）
+function speakWord(word) {
+  if (!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const utter = new SpeechSynthesisUtterance(word);
+  utter.lang = 'zh-CN';
+  utter.rate = 0.85;
+  utter.pitch = 1.1;
+  window.speechSynthesis.speak(utter);
+}
+
 function sfxCorrect() {
   playTone(523, 0.12, 'sine', 0.25);
   setTimeout(() => playTone(659, 0.15, 'sine', 0.3), 100);
@@ -3450,7 +3461,7 @@ function showKnowCard(item) {
     document.getElementById('kc-char-title').textContent = char + '（' + (PY_MAP[char] || '') + '）';
     document.getElementById('kc-radical').textContent = d.r ? `${d.r}（用"${d.r}"查字典）` : '—';
     document.getElementById('kc-strokes').textContent = d.s ? `${d.s}画` : '—';
-    document.getElementById('kc-words').innerHTML = (d.w || []).map(w => `<span class="kc-tag">${w}</span>`).join('');
+    document.getElementById('kc-words').innerHTML = (d.w || []).map(w => `<span class="kc-tag" onclick="speakWord('${w}')" title="点击听发音">🔊 ${w}</span>`).join('');
     document.getElementById('kc-exam').textContent = d.e || '—';
     const polyEl = document.getElementById('kc-poly-section');
     if (d.p && d.p.length) {
@@ -3461,6 +3472,17 @@ function showKnowCard(item) {
         </div>`).join('');
     } else {
       polyEl.innerHTML = '';
+    }
+    // 语音播报组词
+    if (d.w && d.w.length > 0 && window.speechSynthesis) {
+      setTimeout(() => {
+        const utter = new SpeechSynthesisUtterance(d.w[0]);
+        utter.lang = 'zh-CN';
+        utter.rate = 0.85;
+        utter.pitch = 1.1;
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(utter);
+      }, 300);
     }
   } else {
     // 题目模式：显示提示
